@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/divider"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ===== HEADER (Always Visible - Compact View) ===== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- DO Number -->
+            <TextView
+                android:id="@+id/tvDoNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/chipStatus"
+                android:layout_marginEnd="10dp"
+                tools:text="DO-2026-02-09-0001" />
+
+            <!-- Status Chip -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:chipCornerRadius="8dp"
+                app:chipMinHeight="28dp"
+                app:chipStartPadding="8dp"
+                app:chipEndPadding="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnExpand"
+                android:layout_marginEnd="8dp"
+                tools:text="Scanning" />
+
+            <!-- Expand Button -->
+            <ImageButton
+                android:id="@+id/btnExpand"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/arrow_down_float"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_hint"
+                android:contentDescription="Expand"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Supplier (Compact) -->
+            <TextView
+                android:id="@+id/tvSupplier"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_marginTop="6dp"
+                app:layout_constraintTop_toBottomOf="@id/tvDoNumber"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvProgress"
+                android:layout_marginEnd="12dp"
+                tools:text="PT BPM Indonesia" />
+
+            <!-- Progress Percentage (Compact) -->
+            <TextView
+                android:id="@+id/tvProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary"
+                app:layout_constraintTop_toTopOf="@id/tvSupplier"
+                app:layout_constraintBottom_toBottomOf="@id/tvSupplier"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="75%" />
+
+            <!-- Progress Bar (Compact) -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="8dp"
+                android:max="100"
+                android:progressDrawable="@drawable/progress_rounded"
+                app:layout_constraintTop_toBottomOf="@id/tvSupplier"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:progress="75" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ===== EXPANDED CONTENT (Hidden by default) ===== -->
+        <LinearLayout
+            android:id="@+id/layoutExpandedContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginHorizontal="14dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="14dp"
+                android:paddingTop="10dp">
+
+                <!-- Surat Jalan -->
+                <ImageView
+                    android:id="@+id/iconSj"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_description"
+                    android:tint="@color/info"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvSuratJalan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintTop_toTopOf="@id/iconSj"
+                    app:layout_constraintBottom_toBottomOf="@id/iconSj"
+                    app:layout_constraintStart_toEndOf="@id/iconSj"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:text="SJ: 12314123" />
+
+                <!-- Staging Area -->
+                <ImageView
+                    android:id="@+id/iconStaging"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_location"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/iconSj"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:tint="@color/success" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipStaging"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:layout_marginStart="8dp"
+                    app:chipMinHeight="26dp"
+                    app:chipCornerRadius="8dp"
+                    app:chipStartPadding="10dp"
+                    app:chipEndPadding="10dp"
+                    app:chipBackgroundColor="@color/success"
+                    app:layout_constraintTop_toTopOf="@id/iconStaging"
+                    app:layout_constraintBottom_toBottomOf="@id/iconStaging"
+                    app:layout_constraintStart_toEndOf="@id/iconStaging"
+                    tools:text="📍 STG-BDG-001" />
+
+                <!-- Items Summary -->
+                <ImageView
+                    android:id="@+id/iconItems"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@android:drawable/ic_menu_view"
+                    android:tint="@color/primary"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/iconStaging"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvItemsLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintTop_toTopOf="@id/iconItems"
+                    app:layout_constraintBottom_toBottomOf="@id/iconItems"
+                    app:layout_constraintStart_toEndOf="@id/iconItems"
+                    app:layout_constraintEnd_toStartOf="@id/btnDetailScan"
+                    tools:text="Total: 5 SKU" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDetailScan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Detail"
+                    android:textSize="12sp"
+                    android:paddingHorizontal="12dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    app:cornerRadius="8dp"
+                    app:icon="@android:drawable/ic_menu_info_details"
+                    app:iconSize="14dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:layout_constraintTop_toTopOf="@id/iconItems"
+                    app:layout_constraintBottom_toBottomOf="@id/iconItems"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Divider before Qty Cards -->
+                <View
+                    android:id="@+id/dividerQty"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/iconItems"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Qty Summary Cards -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardTarget"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#E3F2FD"
+                    app:strokeColor="#90CAF9"
+                    app:strokeWidth="1dp"
+                    app:layout_constraintTop_toBottomOf="@id/dividerQty"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/cardScan"
+                    app:layout_constraintWidth_percent="0.31">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🎯"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Target"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:textColor="#1565C0"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:id="@+id/tvQtyDo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#0D47A1"
+                            android:layout_marginTop="4dp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            tools:text="20 Ktn" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardScan"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#E8F5E9"
+                    app:strokeColor="#81C784"
+                    app:strokeWidth="1dp"
+                    app:layout_constraintTop_toTopOf="@id/cardTarget"
+                    app:layout_constraintBottom_toBottomOf="@id/cardTarget"
+                    app:layout_constraintStart_toEndOf="@id/cardTarget"
+                    app:layout_constraintEnd_toStartOf="@id/cardSelisih"
+                    app:layout_constraintWidth_percent="0.31">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📦"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Scan"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:textColor="#2E7D32"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:id="@+id/tvQtyScan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#1B5E20"
+                            android:layout_marginTop="4dp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            tools:text="18 Ktn" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardSelisih"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFF3E0"
+                    app:strokeColor="#FFB74D"
+                    app:strokeWidth="1dp"
+                    app:layout_constraintTop_toTopOf="@id/cardTarget"
+                    app:layout_constraintBottom_toBottomOf="@id/cardTarget"
+                    app:layout_constraintStart_toEndOf="@id/cardScan"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintWidth_percent="0.31">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📊"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Selisih"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:textColor="#EF6C00"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:id="@+id/tvSelisih"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#E65100"
+                            android:layout_marginTop="4dp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            tools:text="-2 Ktn" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ===== TOMBOL MULAI SCAN ===== -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMulaiScan"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:text="📷  Mulai Scan"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    style="@style/Widget.Material3.Button"
+                    app:cornerRadius="12dp"
+                    app:iconGravity="textStart"
+                    app:iconSize="20dp"
+                    app:iconPadding="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/cardTarget"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Hidden views for compatibility -->
+                <TextView
+                    android:id="@+id/tvItemsList"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/btnMulaiScan"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/layoutQtyStats"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/btnMulaiScan"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

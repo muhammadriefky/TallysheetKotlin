@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
+    <!-- Main Content -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F5F7FA">
+
+        <!-- Modern App Bar with Gradient -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_toolbar_gradient"
+            app:elevation="0dp">
+
+            <!-- Toolbar -->
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:titleTextColor="@color/white"
+                app:subtitleTextColor="#B3FFFFFF"
+                app:navigationIconTint="@color/white">
+
+                <!-- Custom Toolbar Content -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Logo + Title -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="2dp"
+                            app:cardBackgroundColor="@color/white">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_warehouse_splash"
+                                app:tint="@color/primary"/>
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="TALLYSHEET"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.05"/>
+
+                            <TextView
+                                android:id="@+id/tvToolbarBranch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cabang: Jakarta Pusat"
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="11sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Action Icons -->
+                    <ImageButton
+                        android:id="@+id/btnNotification"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_notification"
+                        app:tint="@color/white"
+                        android:contentDescription="Notifications"/>
+
+                </LinearLayout>
+            </com.google.android.material.appbar.MaterialToolbar>
+
+            <!-- Stats Summary Cards -->
+            <LinearLayout
+                android:id="@+id/statsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="20dp">
+
+                <!-- Total DO -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_stat_card_blue"
+                    android:padding="12dp"
+                    android:layout_marginEnd="6dp">
+
+                    <TextView
+                        android:id="@+id/tvStatTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#1565C0"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total DO"
+                        android:textSize="11sp"
+                        android:textColor="#1976D2"
+                        android:layout_marginTop="2dp"/>
+                </LinearLayout>
+
+                <!-- Scanning -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_stat_card_orange"
+                    android:padding="12dp"
+                    android:layout_marginHorizontal="6dp">
+
+                    <TextView
+                        android:id="@+id/tvStatScanning"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#E65100"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scanning"
+                        android:textSize="11sp"
+                        android:textColor="#F57C00"
+                        android:layout_marginTop="2dp"/>
+                </LinearLayout>
+
+                <!-- Completed -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_stat_card_green"
+                    android:padding="12dp"
+                    android:layout_marginStart="6dp">
+
+                    <TextView
+                        android:id="@+id/tvStatCompleted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="7"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#2E7D32"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selesai"
+                        android:textSize="11sp"
+                        android:textColor="#43A047"
+                        android:layout_marginTop="2dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Main Content Area with NestedScrollView -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="100dp">
+
+                    <!-- Search & Filter Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardDateFilter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="14dp">
+
+                            <!-- Modern Search Bar -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_search_modern"
+                                android:paddingHorizontal="14dp">
+
+                                <ImageView
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:src="@drawable/ic_search"
+                                    app:tint="@color/text_hint"/>
+
+                                <EditText
+                                    android:id="@+id/etSearch"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:layout_marginStart="12dp"
+                                    android:background="@android:color/transparent"
+                                    android:hint="Cari DO, Surat Jalan, Supplier..."
+                                    android:textColorHint="@color/text_hint"
+                                    android:textSize="14sp"
+                                    android:inputType="text"
+                                    android:imeOptions="actionSearch"
+                                    android:maxLines="1"/>
+                            </LinearLayout>
+
+                            <!-- Date Filter Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="12dp"
+                                android:gravity="center_vertical">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_calendar"
+                                    app:tint="@color/primary"
+                                    android:layout_marginEnd="10dp"/>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnDateFilter"
+                                    android:layout_width="0dp"
+                                    android:layout_height="42dp"
+                                    android:layout_weight="1"
+                                    android:text="Semua Tanggal"
+                                    android:textSize="13sp"
+                                    android:textColor="@color/text_primary"
+                                    android:textAllCaps="false"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
+                                    app:cornerRadius="12dp"
+                                    app:icon="@drawable/ic_arrow_down"
+                                    app:iconGravity="end"
+                                    app:iconSize="18dp"
+                                    app:iconTint="@color/text_hint"
+                                    app:strokeColor="#E0E0E0"
+                                    app:strokeWidth="1dp"/>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnClearDateFilter"
+                                    android:layout_width="42dp"
+                                    android:layout_height="42dp"
+                                    android:layout_marginStart="10dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:padding="0dp"
+                                    style="@style/Widget.Material3.Button.TonalButton"
+                                    app:backgroundTint="#FFEBEE"
+                                    app:cornerRadius="12dp"
+                                    app:icon="@android:drawable/ic_menu_close_clear_cancel"
+                                    app:iconGravity="textStart"
+                                    app:iconSize="18dp"
+                                    app:iconTint="@color/error"
+                                    app:iconPadding="0dp"
+                                    android:visibility="gone"
+                                    tools:visibility="visible"/>
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Filter Chips -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardFilters"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="10dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupFilters"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="12dp"
+                            app:singleSelection="true"
+                            app:chipSpacingHorizontal="8dp">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipSemua"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:text="Semua"
+                                app:chipCornerRadius="20dp"
+                                app:chipBackgroundColor="@color/chip_bg_selector"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipBerlangsung"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Berlangsung"
+                                app:chipCornerRadius="20dp"
+                                app:chipBackgroundColor="@color/chip_bg_selector"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipSelesai"
+                                style="@style/Widget.Material3.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Selesai"
+                                app:chipCornerRadius="20dp"
+                                app:chipBackgroundColor="@color/chip_bg_selector"
+                                app:checkedIconVisible="false"/>
+
+                        </com.google.android.material.chip.ChipGroup>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Section Header -->
+                    <LinearLayout
+                        android:id="@+id/sectionHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Delivery Orders"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"/>
+
+                        <TextView
+                            android:id="@+id/tvDoCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="12 Items"
+                            android:textSize="13sp"
+                            android:textColor="@color/primary"/>
+                    </LinearLayout>
+
+                    <!-- RecyclerView (scrolls with page) -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false"
+                        android:clipToPadding="false"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="4dp"
+                        tools:listitem="@layout/item_delivery_order"/>
+
+                    <!-- Empty State -->
+                    <LinearLayout
+                        android:id="@+id/layoutEmptyState"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="48dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/ic_inventory"
+                            app:tint="#E0E0E0"
+                            android:alpha="0.6"/>
+
+                        <TextView
+                            android:id="@+id/tvEmptyState"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tidak ada Delivery Order"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="16dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Data akan muncul di sini"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_hint"
+                            android:layout_marginTop="4dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Modern Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:background="@color/white"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:itemBackground="@drawable/nav_item_background"
+        app:itemShapeAppearance="@style/ShapeAppearance.App.NavItem"
+        app:itemShapeFillColor="@color/nav_item_bg_color"
+        app:itemHorizontalPadding="24dp"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

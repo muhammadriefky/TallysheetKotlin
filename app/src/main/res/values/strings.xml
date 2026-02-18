@@ -1,0 +1,62 @@
+<resources>
+    <!-- Nama Aplikasi -->
+    <string name="app_name">Tallysheet Gudang</string>
+
+    <!-- Filter Chip Labels -->
+    <string name="filter_all">Semua</string>
+    <string name="filter_ongoing">Berlangsung</string>
+    <string name="filter_completed">Selesai</string>
+
+    <!-- Empty State -->
+    <string name="empty_delivery_orders">Tidak ada data Delivery Order.</string>
+
+    <!-- Label & Button Scan Activity -->
+    <string name="mode_karton">Mode: KARTON</string>
+    <string name="mode_pcs">Mode: PCS</string>
+    <string name="complete">Selesai</string>
+    <string name="scan_history">Riwayat Scan</string>
+
+    <!-- Label Statistik (Default jika data belum ada) -->
+    <string name="stat_items">0 Items</string>
+    <string name="stat_karton">0 Karton</string>
+    <string name="stat_pcs">0 PCS</string>
+
+    <!-- Dialog Konfirmasi Selesai -->
+    <string name="dialog_complete_title">Selesaikan Scan?</string>
+    <string name="dialog_complete_message">Apakah Anda yakin ingin menyelesaikan proses scan untuk DO ini?</string>
+    <string name="dialog_complete_confirm">Ya, Selesai</string>
+
+    <!-- Dialog Input Manual (Jika ada) -->
+    <string name="dialog_scan_title">Hasil Scan</string>
+    <string name="dialog_scan_input_qty">Masukkan Jumlah:</string>
+    <string name="submit">Simpan</string>
+    <string name="cancel">Batal</string>
+
+    <!-- Toast / Snackbar Messages -->
+    <string name="error_permission_camera">Izin kamera diperlukan untuk melakukan scanning.</string>
+    <string name="error_data_not_found">Data Delivery Order tidak ditemukan.</string>
+    <string name="scan_success">Scan berhasil disimpan</string>
+    <string name="scan_failed">Gagal memproses barcode</string>
+    <!-- Sidebar / Navigation Drawer Accessibility (Penting agar tidak error di Kotlin) -->
+    <string name="navigation_drawer_open">Buka navigasi sidebar</string>
+    <string name="navigation_drawer_close">Tutup navigasi sidebar</string>
+
+    <!-- Sidebar Menu Items -->
+    <string name="menu_home">Beranda</string>
+    <string name="menu_history">Riwayat Scan</string>
+    <string name="menu_profile">Profil Saya</string>
+    <string name="menu_logout">Keluar Aplikasi</string>
+
+    <!-- Login Screen (Jika dibutuhkan oleh layout login) -->
+    <string name="login_title">Silakan Masuk</string>
+    <string name="step_1_company">Pilih Perusahaan</string>
+    <string name="step_2_user">Pilih User</string>
+    <string name="password">Kata Sandi</string>
+    <string name="login">Masuk</string>
+
+    <!-- Dialog Logout -->
+    <string name="logout_confirm_title">Logout</string>
+    <string name="logout_confirm_message">Apakah Anda yakin ingin keluar dari akun ini?</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+</resources>
