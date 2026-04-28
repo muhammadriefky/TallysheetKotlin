@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"
-    tools:context=".ui.ScanActivity">
+    android:background="?android:attr/colorBackground"
+    tools:context=".ui.scan.ScanActivity">
 
     <!-- Modern App Bar -->
     <com.google.android.material.appbar.AppBarLayout
@@ -77,6 +77,49 @@
                     android:src="@drawable/ic_refresh"
                     app:tint="@android:color/white"
                     android:contentDescription="Refresh"/>
+            </LinearLayout>
+
+            <!-- Offline Indicator Banner -->
+            <LinearLayout
+                android:id="@+id/offlineBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_offline_banner"
+                android:padding="10dp"
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_cloud_off"
+                    app:tint="#FFF"
+                    android:contentDescription="Offline"/>
+
+                <TextView
+                    android:id="@+id/tvOfflineMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="Mode Offline - 0 scan pending"
+                    android:textColor="#FFF"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/btnSyncNow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SYNC"
+                    android:textColor="#FFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_sync_button"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <!-- Stats Summary Row -->
@@ -622,7 +665,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#E0E0E0"/>
+                        android:background="@color/divider"/>
 
                     <!-- ViewPager2 -->
                     <androidx.viewpager2.widget.ViewPager2
@@ -782,3 +825,4 @@
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

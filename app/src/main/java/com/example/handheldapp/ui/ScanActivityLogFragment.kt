@@ -63,7 +63,9 @@ class ScanActivityLogFragment : Fragment() {
                     showLoading(false)
                     val data = resource.data ?: emptyList()
                     android.util.Log.d("ScanActivityLog", "📝 RIWAYAT LENGKAP - Total scans: ${data.size}")
-                    adapter.submitList(data)
+                    // ★ Force refresh adapter dengan list baru untuk trigger DiffUtil
+                    adapter.submitList(null) // Clear first
+                    adapter.submitList(data.toList()) // Submit new list (copy)
                     showEmptyState(data.isEmpty())
                 }
                 is Resource.Error -> {

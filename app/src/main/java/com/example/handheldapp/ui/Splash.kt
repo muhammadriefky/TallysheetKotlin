@@ -13,7 +13,13 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
+import androidx.lifecycle.lifecycleScope
 import com.example.handheldapp.databinding.ActivitySplashBinding
+import com.example.handheldapp.ui.base.BaseActivity
+import com.example.handheldapp.utils.AppStatusManager
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * SplashActivity - Modern Animated Splash Screen
@@ -25,11 +31,16 @@ import com.example.handheldapp.databinding.ActivitySplashBinding
  * - Feature highlights with stagger animation
  * - Loading dots animation
  * - Smooth transition to LoginActivity
+ * - **APP STATUS CHECK** - Block access during CRITICAL maintenance
  */
-class Splash : AppCompatActivity() {
+@AndroidEntryPoint
+class Splash : BaseActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     private val handler = Handler(Looper.getMainLooper())
+
+    @Inject
+    lateinit var appStatusManager: AppStatusManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +50,37 @@ class Splash : AppCompatActivity() {
         // Start animations
         startAnimations()
 
-        // Navigate to Login after delay
+        // Check app status and navigate after delay
         handler.postDelayed({
-            navigateToLogin()
+            checkAppStatusAndNavigate()
         }, 4000) // 4 seconds total
+    }
+
+    /**
+     * Check app status sebelum navigate
+     * ★ SIMPLIFIED: Semua handling maintenance dipindah ke LoginActivity dengan UI baru
+     * SplashActivity hanya log status dan langsung navigate
+     */
+    private fun checkAppStatusAndNavigate() {
+        lifecycleScope.launch {
+            try {
+                val versionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+                val status = appStatusManager.checkAppStatus(versionCode)
+
+                android.util.Log.d("SplashActivity", "App status: $status")
+                android.util.Log.d("SplashActivity", "Maintenance type: ${appStatusManager.getMaintenanceType()}")
+                android.util.Log.d("SplashActivity", "Offline work allowed: ${appStatusManager.isOfflineWorkAllowed()}")
+
+                // ★ Langsung navigate ke LoginActivity
+                // Semua handling maintenance (critical/major/minor) dilakukan di LoginActivity dengan UI baru
+                navigateToLogin()
+
+            } catch (e: Exception) {
+                android.util.Log.e("SplashActivity", "Error checking status: ${e.message}")
+                // Jika error check status, tetap lanjut ke login (biar offline mode bisa jalan)
+                navigateToLogin()
+            }
+        }
     }
 
     private fun startAnimations() {
@@ -189,23 +227,51 @@ class Splash : AppCompatActivity() {
             start()
         }
 
-        // Stagger animation for each feature
+        // Stagger animation for each feature card (now CardViews)
         listOf(binding.featureScan, binding.featureRealtime, binding.featureTracking)
-            .forEachIndexed { index, view ->
+            .forEachIndexed { index, cardView ->
                 handler.postDelayed({
-                    view.scaleX = 0.8f
-                    view.scaleY = 0.8f
-                    ObjectAnimator.ofFloat(view, View.SCALE_X, 0.8f, 1f).apply {
-                        duration = 300
-                        interpolator = OvershootInterpolator()
+                    cardView.scaleX = 0.7f
+                    cardView.scaleY = 0.7f
+                    cardView.alpha = 0f
+
+                    // Scale animation
+                    AnimatorSet().apply {
+                        playTogether(
+                            ObjectAnimator.ofFloat(cardView, View.SCALE_X, 0.7f, 1.05f, 1f).apply {
+                                duration = 400
+                                interpolator = OvershootInterpolator(1.5f)
+                            },
+                            ObjectAnimator.ofFloat(cardView, View.SCALE_Y, 0.7f, 1.05f, 1f).apply {
+                                duration = 400
+                                interpolator = OvershootInterpolator(1.5f)
+                            },
+                            ObjectAnimator.ofFloat(cardView, View.ALPHA, 0f, 1f).apply {
+                                duration = 350
+                            }
+                        )
                         start()
                     }
-                    ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.8f, 1f).apply {
-                        duration = 300
-                        interpolator = OvershootInterpolator()
-                        start()
-                    }
-                }, (index * 150).toLong())
+
+                    // Add subtle pulse animation after entrance
+                    handler.postDelayed({
+                        val pulseAnimator = ObjectAnimator.ofFloat(cardView, View.SCALE_X, 1f, 1.03f, 1f).apply {
+                            duration = 2000
+                            repeatCount = ValueAnimator.INFINITE
+                            repeatMode = ValueAnimator.REVERSE
+                        }
+                        val pulseY = ObjectAnimator.ofFloat(cardView, View.SCALE_Y, 1f, 1.03f, 1f).apply {
+                            duration = 2000
+                            repeatCount = ValueAnimator.INFINITE
+                            repeatMode = ValueAnimator.REVERSE
+                        }
+                        AnimatorSet().apply {
+                            playTogether(pulseAnimator, pulseY)
+                            start()
+                        }
+                    }, 500)
+
+                }, (index * 180).toLong())
             }
     }
 
@@ -260,7 +326,8 @@ class Splash : AppCompatActivity() {
         val particles = listOf(
             binding.particleView1,
             binding.particleView2,
-            binding.particleView3
+            binding.particleView3,
+            binding.particleView4
         )
 
         particles.forEachIndexed { index, particle ->

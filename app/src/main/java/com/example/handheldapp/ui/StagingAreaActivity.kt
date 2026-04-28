@@ -14,6 +14,7 @@ import com.example.handheldapp.data.model.DeliveryOrder
 import com.example.handheldapp.data.model.StagingArea
 import com.example.handheldapp.databinding.ActivityStagingAreaBinding
 import com.example.handheldapp.ui.ScanActivity
+import com.example.handheldapp.ui.base.BaseActivity
 import com.example.handheldapp.utils.Resource
 import com.example.handheldapp.viewmodel.StagingAreaViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class StagingAreaActivity : AppCompatActivity() {
+class StagingAreaActivity : BaseActivity() {
 
     private lateinit var binding: ActivityStagingAreaBinding
     private val viewModel: StagingAreaViewModel by viewModels()

@@ -15,12 +15,13 @@ class DeliveryOrderRepository @Inject constructor(
 ) {
 
     /**
-     * Ambil semua Delivery Orders dengan filter branch, company, dan date
+     * Ambil semua Delivery Orders dengan filter branch, company, date, dan status
+     * status: "active" (belum selesai), "history" (sudah selesai), "all" (semua)
      */
-    fun getDeliveryOrders(branchCode: String, companyCode: String, date: String? = null): Flow<Resource<List<DeliveryOrder>>> = flow {
+    fun getDeliveryOrders(branchCode: String, companyCode: String, date: String? = null, status: String = "active"): Flow<Resource<List<DeliveryOrder>>> = flow {
         emit(Resource.Loading())
         try {
-            val response = doApi.getDeliveryOrders(branchCode, companyCode, date)
+            val response = doApi.getDeliveryOrders(branchCode, companyCode, date, status)
 
             if (response.success && response.data != null) {
                 emit(Resource.Success(response.data))

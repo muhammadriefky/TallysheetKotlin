@@ -16,7 +16,7 @@ data class DeliveryOrder(
     @SerializedName("doh_supplier") val dohSupplier: String?,
     @SerializedName("doh_status") val dohStatus: String?,
     @SerializedName("staff_status") val staffStatus: String?,
-    @SerializedName("manager_status") val managerStatus: String?,
+    // manager_status removed - single level approval by Kepala Gudang only
     @SerializedName("total_items") val totalItems: Int,
 
     // Field lama (backward compatible, bisa null)
@@ -40,6 +40,11 @@ data class DeliveryOrder(
 
     // Gudang info (untuk filter scan)
     @SerializedName("do_det_code_gudang") val doDetCodeGudang: String? = null,
+
+    // Status flags from API
+    @SerializedName("is_completed") val isCompleted: Boolean = false, // DO sudah selesai scan atau sudah approved
+    @SerializedName("has_scans") val hasScans: Boolean = false, // DO sudah punya scan items
+    @SerializedName("status_display") val statusDisplay: String? = null, // User-friendly status text from API
 
     @SerializedName("staff_name") val staffName: String?, // Tambahan untuk nama user
     @SerializedName("items") val items: List<DoItem>? = null // Detail SKU dalam DO

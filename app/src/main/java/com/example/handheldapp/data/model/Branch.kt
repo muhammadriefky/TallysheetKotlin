@@ -40,5 +40,5 @@ data class Branch(
         return "$cabCode - $cabName"
     }
 
-    fun getDisplayText(): String = "$cabCode"
+    fun getDisplayText(): String = "$cabCode - $cabName"
 }

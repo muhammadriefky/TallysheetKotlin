@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC">
+    android:background="?android:attr/colorBackground">
 
     <!-- Header Background with Curve -->
     <View
@@ -145,7 +145,7 @@
                     android:layout_weight="1"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginBottom="18dp"
-                    android:background="#E0E0E0"/>
+                    android:background="@color/divider"/>
 
                 <!-- Step 2 -->
                 <LinearLayout
@@ -170,7 +170,7 @@
                         android:id="@+id/tvStep2Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Login"
+                        android:text="Branch"
                         android:textSize="11sp"
                         android:textColor="@color/text_hint"
                         android:layout_marginTop="4dp"/>
@@ -184,7 +184,7 @@
                     android:layout_weight="1"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginBottom="18dp"
-                    android:background="#E0E0E0"/>
+                    android:background="@color/divider"/>
 
                 <!-- Step 3 -->
                 <LinearLayout
@@ -209,7 +209,7 @@
                         android:id="@+id/tvStep3Label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Branch"
+                        android:text="Login"
                         android:textSize="11sp"
                         android:textColor="@color/text_hint"
                         android:layout_marginTop="4dp"/>
@@ -301,7 +301,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginVertical="20dp"
-                            android:background="#F0F0F0"/>
+                            android:background="@color/input_background"/>
 
                         <!-- Company Dropdown -->
                         <TextView
@@ -351,185 +351,9 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Step 2: Login (Username + Password) -->
+                <!-- Step 2: Pilih Cabang -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardStep2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="8dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white"
-                    tools:visibility="gone">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp">
-
-                        <!-- Card Header -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <FrameLayout
-                                android:layout_width="52dp"
-                                android:layout_height="52dp"
-                                android:background="@drawable/bg_icon_circle">
-
-                                <ImageView
-                                    android:layout_width="28dp"
-                                    android:layout_height="28dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_person"
-                                    app:tint="@color/primary"/>
-                            </FrameLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="16dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Masuk Akun"
-                                    android:textSize="20sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/text_primary"/>
-
-                                <TextView
-                                    android:id="@+id/tvSelectedCompany"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="13sp"
-                                    android:textColor="@color/primary"
-                                    android:layout_marginTop="2dp"
-                                    tools:text="PT. Example Company"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- Divider -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginVertical="20dp"
-                            android:background="#F0F0F0"/>
-
-                        <!-- Username Field -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Username"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_secondary"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="8dp"/>
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp"
-                            app:boxStrokeColor="@color/primary"
-                            app:startIconDrawable="@drawable/ic_person"
-                            app:startIconTint="@color/text_secondary"
-                            app:hintEnabled="false">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/edtUsername"
-                                android:layout_width="match_parent"
-                                android:layout_height="56dp"
-                                android:hint="Masukkan username"
-                                android:inputType="text"
-                                android:textSize="15sp"/>
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <!-- Password Field -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Password"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_secondary"
-                            android:textStyle="bold"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="8dp"/>
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp"
-                            app:boxStrokeColor="@color/primary"
-                            app:startIconDrawable="@drawable/ic_lock"
-                            app:startIconTint="@color/text_secondary"
-                            app:endIconMode="password_toggle"
-                            app:hintEnabled="false">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/edtPassword"
-                                android:layout_width="match_parent"
-                                android:layout_height="56dp"
-                                android:hint="Masukkan password"
-                                android:inputType="textPassword"
-                                android:textSize="15sp"/>
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <!-- Buttons -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="24dp">
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnBackStep2"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
-                                android:layout_width="0dp"
-                                android:layout_height="56dp"
-                                android:layout_weight="0.4"
-                                android:text="Kembali"
-                                android:textAllCaps="false"
-                                android:layout_marginEnd="12dp"
-                                app:cornerRadius="14dp"
-                                app:strokeColor="@color/primary"
-                                app:strokeWidth="2dp"
-                                app:icon="@drawable/ic_arrow_left"
-                                app:iconGravity="textStart"/>
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnLogin"
-                                android:layout_width="0dp"
-                                android:layout_height="56dp"
-                                android:layout_weight="0.6"
-                                android:text="Masuk"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textAllCaps="false"
-                                app:cornerRadius="14dp"
-                                app:icon="@drawable/ic_arrow_right"
-                                app:iconGravity="end"
-                                app:iconPadding="8dp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Step 3: Pilih Cabang -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardStep3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
@@ -581,12 +405,13 @@
                                     android:textColor="@color/text_primary"/>
 
                                 <TextView
+                                    android:id="@+id/tvSelectedCompany"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Tentukan lokasi cabang kerja Anda"
                                     android:textSize="13sp"
-                                    android:textColor="@color/text_secondary"
-                                    android:layout_marginTop="2dp"/>
+                                    android:textColor="@color/primary"
+                                    android:layout_marginTop="2dp"
+                                    tools:text="PT. Example Company"/>
                             </LinearLayout>
                         </LinearLayout>
 
@@ -595,7 +420,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginVertical="20dp"
-                            android:background="#F0F0F0"/>
+                            android:background="@color/input_background"/>
 
                         <!-- Branch Dropdown -->
                         <TextView
@@ -608,6 +433,7 @@
                             android:layout_marginBottom="8dp"/>
 
                         <FrameLayout
+                            android:id="@+id/frameBranchDropdown"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
@@ -628,32 +454,180 @@
                                 app:tint="@color/text_secondary"/>
                         </FrameLayout>
 
-                        <!-- Info Card -->
+                        <!-- Buttons -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:background="@drawable/bg_step_badge_active"
-                            android:padding="14dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="24dp">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnBackStep2"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="56dp"
+                                android:layout_weight="0.4"
+                                android:text="Kembali"
+                                android:textAllCaps="false"
+                                android:layout_marginEnd="12dp"
+                                app:cornerRadius="14dp"
+                                app:strokeColor="@color/primary"
+                                app:strokeWidth="2dp"
+                                app:icon="@drawable/ic_arrow_left"
+                                app:iconGravity="textStart"/>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnNextStep2"
+                                android:layout_width="0dp"
+                                android:layout_height="56dp"
+                                android:layout_weight="0.6"
+                                android:text="Lanjutkan"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textAllCaps="false"
+                                app:cornerRadius="14dp"
+                                app:icon="@drawable/ic_arrow_right"
+                                app:iconGravity="end"
+                                app:iconPadding="8dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Step 3: Login (Email + Password) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardStep3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="8dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@color/white"
+                    tools:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <!-- Card Header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
                             android:gravity="center_vertical">
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_info_outline"
-                                app:tint="#4CAF50"/>
+                            <FrameLayout
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_icon_circle">
 
-                            <TextView
+                                <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_person"
+                                    app:tint="@color/primary"/>
+                            </FrameLayout>
+
+                            <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginStart="12dp"
-                                android:text="Pilih cabang akan menentukan data yang ditampilkan sesuai lokasi kerja Anda"
-                                android:textSize="12sp"
-                                android:textColor="#2E7D32"
-                                android:lineSpacingExtra="2dp"/>
+                                android:orientation="vertical"
+                                android:layout_marginStart="16dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Masuk Akun"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/text_primary"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Login dengan email dan password Anda"
+                                    android:textSize="13sp"
+                                    android:textColor="@color/text_secondary"
+                                    android:layout_marginTop="2dp"/>
+                            </LinearLayout>
                         </LinearLayout>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="20dp"
+                            android:background="@color/input_background"/>
+
+                        <!-- Email Field -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_secondary"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxStrokeColor="@color/primary"
+                            app:startIconDrawable="@drawable/ic_person"
+                            app:startIconTint="@color/text_secondary"
+                            app:hintEnabled="false">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtUsername"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:hint="Masukkan email"
+                                android:inputType="textEmailAddress"
+                                android:textSize="15sp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Password Field -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Password"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_secondary"
+                            android:textStyle="bold"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxStrokeColor="@color/primary"
+                            app:startIconDrawable="@drawable/ic_lock"
+                            app:startIconTint="@color/text_secondary"
+                            app:endIconMode="password_toggle"
+                            app:hintEnabled="false">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:hint="Masukkan password"
+                                android:inputType="textPassword"
+                                android:textSize="15sp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
 
                         <!-- Buttons -->
                         <LinearLayout
@@ -678,11 +652,11 @@
                                 app:iconGravity="textStart"/>
 
                             <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnNextStep3"
+                                android:id="@+id/btnLogin"
                                 android:layout_width="0dp"
                                 android:layout_height="56dp"
                                 android:layout_weight="0.6"
-                                android:text="Mulai"
+                                android:text="Masuk"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:textAllCaps="false"
@@ -711,3 +685,4 @@
     </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

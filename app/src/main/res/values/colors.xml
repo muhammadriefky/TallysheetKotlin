@@ -5,23 +5,23 @@
     <color name="primary_dark">#1565C0</color>
     <color name="primary_light">#BBDEFB</color>
     <color name="accent">#FFC107</color>
-    
+
     <!-- Status Colors -->
     <color name="success">#4CAF50</color>
     <color name="error">#F44336</color>
     <color name="warning">#FF9800</color>
     <color name="info">#2196F3</color>
-    
+
     <!-- Text Colors -->
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#757575</color>
     <color name="text_hint">#BDBDBD</color>
-    
+
     <!-- Background Colors -->
     <color name="background">#FAFAFA</color>
     <color name="surface">#FFFFFF</color>
     <color name="divider">#E0E0E0</color>
-    
+
     <!-- Status Badge Colors -->
     <color name="status_arrival">#FF9800</color>
     <color name="status_scanning">#2196F3</color>
@@ -32,4 +32,86 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Card and elevation colors -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_stroke">#E0E0E0</color>
+
+    <!-- Toolbar colors -->
+    <color name="toolbar_subtitle">#B3FFFFFF</color>
+
+    <!-- Navigation Drawer colors - Light Mode -->
+    <color name="nav_background">#FFFFFF</color>
+    <color name="nav_header_background">#1976D2</color>
+    <color name="nav_item_text_color">#212121</color>
+    <color name="nav_item_icon_tint">#757575</color>
+    <color name="nav_item_selected_background">#E3F2FD</color>
+    <color name="nav_item_selected_text">#1976D2</color>
+
+    <!-- Content background -->
+    <color name="content_background">#F5F7FA</color>
+
+    <!-- Ripple and overlay -->
+    <color name="ripple_color">#1F000000</color>
+
+    <!-- Input field colors -->
+    <color name="input_background">#F0F0F0</color>
+    <color name="input_stroke">#E0E0E0</color>
+
+    <!-- Status card backgrounds - Light Mode -->
+    <color name="status_scanning_bg">#E3F2FD</color>
+    <color name="status_pending_bg">#FFF3E0</color>
+    <color name="status_approved_bg">#E8F5E9</color>
+    <color name="status_rejected_bg">#FFEBEE</color>
+    <color name="status_neutral_bg">#ECEFF1</color>
+
+    <!--  ── Base Dialog ─────────────────────────────────────────  -->
+    <color name="dlg_bg">#FFFFFFFF</color>
+    <color name="dlg_surface">#FFF5F8FF</color>
+    <color name="dlg_border">#1A2196F3</color>
+    <color name="dlg_divider">#1A000000</color>
+    <color name="dlg_text_primary">#FF1A237E</color>
+    <!--  biru tua, konsisten dgn judul login  -->
+    <color name="dlg_text_secondary">#FF546E7A</color>
+    <color name="dlg_text_muted">#FF90A4AE</color>
+    <color name="dlg_overlay_scrim">#80000000</color>
+    <!--  ── Biru Utama (brand) ───────────────────────────────────  -->
+    <color name="dlg_blue_dark">#FF1565C0</color>
+    <color name="dlg_blue">#FF2196F3</color>
+    <color name="dlg_blue_light">#FFBBDEFB</color>
+    <color name="dlg_blue_soft">#1A2196F3</color>
+    <color name="dlg_blue_grad_start">#FF1976D2</color>
+    <color name="dlg_blue_grad_end">#FF42A5F5</color>
+    <!--  ── Merah (Critical / Error) ────────────────────────────  -->
+    <color name="dlg_red">#FFF44336</color>
+    <color name="dlg_red_dark">#FFC62828</color>
+    <color name="dlg_red_light">#FFFFCDD2</color>
+    <color name="dlg_red_soft">#1AF44336</color>
+    <!--  ── Oranye (Warning) ─────────────────────────────────────  -->
+    <color name="dlg_orange">#FFFF9800</color>
+    <color name="dlg_orange_dark">#FFE65100</color>
+    <color name="dlg_orange_light">#FFFFE0B2</color>
+    <color name="dlg_orange_soft">#1AFF9800</color>
+    <!--  ── Kuning (Info / Scheduled) ───────────────────────────  -->
+    <color name="dlg_yellow">#FFFFC107</color>
+    <color name="dlg_yellow_soft">#1AFFC107</color>
+    <color name="dlg_yellow_light">#FFFFF8E1</color>
+    <!--  ── Hijau (Success / Optional) ─────────────────────────  -->
+    <color name="dlg_green">#FF4CAF50</color>
+    <color name="dlg_green_dark">#FF2E7D32</color>
+    <color name="dlg_green_light">#FFC8E6C9</color>
+    <color name="dlg_green_soft">#1A4CAF50</color>
+    <!--  ── Check indicator ─────────────────────────────────────  -->
+    <color name="dlg_check_pass_bg">#1A4CAF50</color>
+    <color name="dlg_check_pass_text">#FF2E7D32</color>
+    <color name="dlg_check_fail_bg">#1AF44336</color>
+    <color name="dlg_check_fail_text">#FFC62828</color>
+    <!--  ── Button secondary ────────────────────────────────────  -->
+    <color name="dlg_btn_sec_bg">#FFF5F8FF</color>
+    <color name="dlg_btn_sec_border">#FF2196F3</color>
+    <color name="dlg_btn_sec_text">#FF2196F3</color>
+    <!--  ── Schedule block ──────────────────────────────────────  -->
+    <color name="dlg_schedule_bg">#FFF0F4FF</color>
+    <color name="dlg_schedule_border">#FFBBDEFB</color>
+
 </resources>

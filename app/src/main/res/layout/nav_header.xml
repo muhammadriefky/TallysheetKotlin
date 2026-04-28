@@ -56,79 +56,27 @@
         android:paddingTop="32dp"
         android:paddingBottom="24dp">
 
-        <!-- Avatar Section with Glow Ring -->
+        <!-- Profile Icon (Without Picture) -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Avatar Container -->
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
+            <!-- Icon Container -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center_horizontal"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white">
 
-                <!-- Outer Glow Ring -->
-                <View
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/bg_avatar_ring_outer"
-                    android:alpha="0.3"/>
-
-                <!-- Inner Ring -->
-                <View
-                    android:layout_width="88dp"
-                    android:layout_height="88dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bg_avatar_ring_inner"/>
-
-                <!-- Avatar Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardAvatar"
-                    android:layout_width="76dp"
-                    android:layout_height="76dp"
-                    android:layout_gravity="center"
-                    app:cardCornerRadius="38dp"
-                    app:cardElevation="8dp"
-                    app:strokeWidth="0dp">
-
-                    <ImageView
-                        android:id="@+id/ivAvatar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_user_placeholder"
-                        android:contentDescription="Avatar" />
-
-                    <!-- Gradient Overlay -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_avatar_overlay"/>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Online Status Badge -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardOnlineStatus"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="4dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
-                    app:strokeWidth="3dp"
-                    app:strokeColor="@android:color/white"
-                    app:cardBackgroundColor="#4CAF50">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_check_circle"
-                        app:tint="@android:color/white"/>
-                </com.google.android.material.card.MaterialCardView>
-            </FrameLayout>
+                    android:src="@drawable/ic_warehouse"
+                    app:tint="@color/primary"/>
+            </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
 
         <!-- User Info Card with Glassmorphism -->

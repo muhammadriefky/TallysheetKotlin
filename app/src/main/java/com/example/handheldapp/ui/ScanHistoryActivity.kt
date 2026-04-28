@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.handheldapp.R
 import com.example.handheldapp.data.model.DeliveryOrder
 import com.example.handheldapp.databinding.ActivityScanHistoryBinding
+import com.example.handheldapp.ui.base.BaseActivity
 import com.google.android.material.card.MaterialCardView
 
-class ScanHistoryActivity : AppCompatActivity() {
+class ScanHistoryActivity : BaseActivity() {
 
     private lateinit var binding: ActivityScanHistoryBinding
     private var doId: String = ""

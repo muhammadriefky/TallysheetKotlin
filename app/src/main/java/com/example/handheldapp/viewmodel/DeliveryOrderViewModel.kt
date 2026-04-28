@@ -33,6 +33,7 @@ class DeliveryOrderViewModel @Inject constructor(
     private var currentCompanyCode: String = ""
     private var currentFilter: String = "Semua" // Semua, Berlangsung, Selesai
     private var currentDateFilter: String? = null // YYYY-MM-DD format
+    private var currentStatusFilter: String = "active" // active, history, all
     private var allDeliveryOrders: List<DeliveryOrder> = emptyList()
 
     /**
@@ -45,18 +46,20 @@ class DeliveryOrderViewModel @Inject constructor(
     /**
      * Load semua DOs untuk cabang dan company yang login
      * Sorting: DESC (terbaru di atas)
+     * @param statusFilter: "active" = belum selesai, "history" = sudah selesai, "all" = semua
      */
-    fun loadDeliveryOrders(branchCode: String, companyCode: String = "") {
+    fun loadDeliveryOrders(branchCode: String, companyCode: String = "", statusFilter: String = "active") {
         currentBranchCode = branchCode
         currentCompanyCode = companyCode
+        currentStatusFilter = statusFilter
         _deliveryOrders.value = Resource.Loading()
 
         viewModelScope.launch {
-            doRepository.getDeliveryOrders(branchCode, companyCode, currentDateFilter).collect { resource ->
+            doRepository.getDeliveryOrders(branchCode, companyCode, currentDateFilter, statusFilter).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
                         allDeliveryOrders = resource.data ?: emptyList()
-                        applyFilter()
+                        _deliveryOrders.value = Resource.Success(allDeliveryOrders)
                     }
                     is Resource.Error -> {
                         _deliveryOrders.value = resource
@@ -71,20 +74,26 @@ class DeliveryOrderViewModel @Inject constructor(
 
     /**
      * Refresh data (untuk SwipeRefreshLayout)
+     * Menggunakan status filter yang sama dengan load sebelumnya
      */
     fun refreshDeliveryOrders() {
-        loadDeliveryOrders(currentBranchCode, currentCompanyCode)
+        loadDeliveryOrders(currentBranchCode, currentCompanyCode, currentStatusFilter)
     }
 
     /**
-     * Filter DOs by status
-     * - "Semua" = tampilkan semua
-     * - "Berlangsung" = progress < 100%
-     * - "Selesai" = progress = 100%
+     * Filter DOs by status - memanggil API dengan filter yang sesuai
+     * - "Semua" = status=all (tampilkan semua)
+     * - "Berlangsung" = status=active (belum selesai)
+     * - "Selesai" = status=history (sudah selesai)
      */
     fun filterByStatus(filter: String) {
         currentFilter = filter
-        applyFilter()
+        val apiStatus = when (filter) {
+            "Berlangsung" -> "active"
+            "Selesai" -> "history"
+            else -> "all"
+        }
+        loadDeliveryOrders(currentBranchCode, currentCompanyCode, apiStatus)
     }
 
     /**

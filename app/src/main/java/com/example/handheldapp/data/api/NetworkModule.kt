@@ -39,21 +39,26 @@ object NetworkModule {
     @Singleton
     fun provideAuthInterceptor(sessionManager: SessionManager): Interceptor {
         return Interceptor { chain ->
+            val request = chain.request()
             val token = runBlocking {
                 sessionManager.getToken().first()
             }
 
-            val request = chain.request().newBuilder()
+            val requestBuilder = request.newBuilder()
+            requestBuilder.addHeader("ngrok-skip-browser-warning", "true")
+            
+            // CEK: Jika ini request login, JANGAN tambahkan Authorization header
+            val isLoginRequest = request.url.encodedPath.endsWith("login")
 
-            // Add authorization header if token exists
-            if (!token.isNullOrEmpty()) {
-                request.addHeader("Authorization", "Bearer $token")
+            // Add authorization header if token exists and it's NOT a login request
+            if (!token.isNullOrEmpty() && !isLoginRequest) {
+                requestBuilder.addHeader("Authorization", "Bearer $token")
             }
 
-            request.addHeader("Accept", "application/json")
-            request.addHeader("Content-Type", "application/json")
+            requestBuilder.addHeader("Accept", "application/json")
+            requestBuilder.addHeader("Content-Type", "application/json")
 
-            chain.proceed(request.build())
+            chain.proceed(requestBuilder.build())
         }
     }
 
@@ -66,9 +71,9 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
             .build()
     }
 
@@ -104,5 +109,23 @@ object NetworkModule {
     @Singleton
     fun provideStagingAreaApiService(retrofit: Retrofit): StagingAreaApiService {
         return retrofit.create(StagingAreaApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppVersionApiService(retrofit: Retrofit): AppVersionApiService {
+        return retrofit.create(AppVersionApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductApiService(retrofit: Retrofit): ProductApiService {
+        return retrofit.create(ProductApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationApiService(retrofit: Retrofit): NotificationApiService {
+        return retrofit.create(NotificationApiService::class.java)
     }
 }

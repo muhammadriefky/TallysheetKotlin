@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,38 +15,41 @@ import android.os.Vibrator
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.example.handheldapp.adapter.ScanHistoryPagerAdapter
+import com.example.handheldapp.data.local.SessionManager
+import com.example.handheldapp.data.local.SettingsManager
 import com.example.handheldapp.databinding.ActivityScanBinding
+import com.example.handheldapp.ui.base.BaseActivity
 import com.example.handheldapp.utils.Resource
 import com.example.handheldapp.viewmodel.ScanViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-/**
- * Activity untuk Scan Barcode dan Tally Sheet
- *
- * Flow:
- * 1. Staging dipilih di MainActivity sebelum masuk ke sini
- * 2. User scan barcode (via hardware scanner atau manual input)
- * 3. System cek barcode di API (tabel tgu_ms_product_Business kolom SKU_Barcode_pcs)
- * 4. Jika ditemukan 1 SKU: langsung tampilkan form qty
- * 5. Jika ditemukan >1 SKU: tampilkan dialog pilihan SKU
- * 6. User input qty dan submit
- * 7. Refresh history list
- */
 @AndroidEntryPoint
-class ScanActivity : AppCompatActivity() {
+class ScanActivity : BaseActivity() {
 
     private lateinit var binding: ActivityScanBinding
     private val viewModel: ScanViewModel by viewModels()
     private lateinit var pagerAdapter: ScanHistoryPagerAdapter
 
+    @Inject
+    lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var settingsManager: SettingsManager
+
     private var selectedSku: String? = null
     private var selectedProductName: String? = null
     private var selectedPcsPerKarton: Int = 1
     private var isCompleted: Boolean = false // Track apakah scan sudah selesai
+
+    // ToneGenerator untuk beep sound
+    private var toneGenerator: ToneGenerator? = null
 
     // Manual mode state (untuk barcode rusak)
     private var manualModeBarcode: String? = null
@@ -79,6 +84,16 @@ class ScanActivity : AppCompatActivity() {
         binding = ActivityScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // ═══════════════════════════════════════════════════════════════════════
+        // 🔧 DEBUG: Log API Configuration
+        // ═══════════════════════════════════════════════════════════════════════
+        android.util.Log.d("ScanActivity", "════════════════════════════════════════════════════════")
+        android.util.Log.d("ScanActivity", "📡 API CONFIGURATION:")
+        android.util.Log.d("ScanActivity", "   BASE_URL: ${com.example.handheldapp.BuildConfig.BASE_URL}")
+        android.util.Log.d("ScanActivity", "   IS_PRODUCTION: ${com.example.handheldapp.BuildConfig.IS_PRODUCTION}")
+        android.util.Log.d("ScanActivity", "   VERSION: ${com.example.handheldapp.BuildConfig.VERSION_NAME_STR}")
+        android.util.Log.d("ScanActivity", "════════════════════════════════════════════════════════")
+
         // Get DO ID from intent
         val doId = intent.getStringExtra("EXTRA_DO_ID") ?: run {
             Toast.makeText(this, "DO ID tidak ditemukan", Toast.LENGTH_SHORT).show()
@@ -86,16 +101,19 @@ class ScanActivity : AppCompatActivity() {
             return
         }
 
-        binding.btnBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-
         viewModel.setDeliveryOrderId(doId)
 
         // Get gudang code from intent for filtering scan results
         val gudangCode = intent.getStringExtra("EXTRA_GUDANG_CODE")
         android.util.Log.d("ScanActivity", "🏭 EXTRA_GUDANG_CODE from intent: ${gudangCode ?: "NULL"}")
+
+        // Save gudangCode to session for future use (master product sync, etc)
+        if (!gudangCode.isNullOrEmpty()) {
+            lifecycleScope.launch {
+                sessionManager.saveGudangCode(gudangCode)
+                android.util.Log.d("ScanActivity", "💾 Saved gudangCode to session: $gudangCode")
+            }
+        }
 
         // Debug toast - hapus setelah fix
         Toast.makeText(this, "Gudang filter: ${gudangCode ?: "TIDAK ADA"}", Toast.LENGTH_LONG).show()
@@ -108,6 +126,9 @@ class ScanActivity : AppCompatActivity() {
 
         // Cek staging assignment untuk update info di toolbar
         viewModel.checkStagingAssignment()
+
+        // Initialize ToneGenerator untuk beep sound
+        initToneGenerator()
     }
 
     // Registrasi Receiver saat Activity tampil
@@ -128,10 +149,27 @@ class ScanActivity : AppCompatActivity() {
         try {
             unregisterReceiver(barcodeReceiver)
         } catch (e: Exception) {
-            // Receiver already unregistered
+            // Already unregistered
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // Release ToneGenerator
+        toneGenerator?.release()
+        toneGenerator = null
+    }
+
+    /**
+     * Initialize ToneGenerator untuk scan beep sound
+     */
+    private fun initToneGenerator() {
+        try {
+            toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        } catch (e: Exception) {
+            android.util.Log.e("ScanActivity", "Failed to init ToneGenerator: ${e.message}")
+        }
+    }
     private fun setupUI() {
         // Setup ViewPager2 untuk TabLayout (Ringkasan + Riwayat Scan)
         pagerAdapter = ScanHistoryPagerAdapter(this)
@@ -165,6 +203,16 @@ class ScanActivity : AppCompatActivity() {
                     debounceHandler.postDelayed(debounceRunnable!!, DEBOUNCE_DELAY)
                 }
             }
+        }
+
+        // Back button - return to MainActivity
+        try {
+            binding.btnBack?.setOnClickListener {
+                onBackPressed()
+            }
+        } catch (e: Exception) {
+            // btnBack might not exist in this layout version
+            android.util.Log.w("ScanActivity", "btnBack not found in layout")
         }
 
         // Submit scan button
@@ -208,6 +256,28 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+        // ✅ Observe DO Status - update real-time setelah submit scan
+        viewModel.currentDoStatus.observe(this) { status ->
+            status?.let {
+                android.util.Log.d("ScanActivity", "📊 DO Status updated: $it")
+                // Update status display di tvDoNumber atau title jika diperlukan
+                when (it.lowercase()) {
+                    "scanning" -> {
+                        // Status scanning - DO masih aktif
+                        android.util.Log.d("ScanActivity", "✅ DO Status: SCANNING (Aktif)")
+                    }
+                    "scan_completed" -> {
+                        // Scan selesai - menunggu approval
+                        android.util.Log.d("ScanActivity", "⏰ DO Status: SCAN COMPLETED (Menunggu Approval)")
+                    }
+                    "completed" -> {
+                        // Fully completed - masuk history
+                        android.util.Log.d("ScanActivity", "🎉 DO Status: COMPLETED (Selesai)")
+                    }
+                }
+            }
+        }
+
         // Observe DO completion status - PENTING: cek status completion saat activity dibuka
         viewModel.isDoCompleted.observe(this) { completed ->
             if (completed && !isCompleted) {
@@ -346,6 +416,104 @@ class ScanActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        // === OFFLINE MODE OBSERVERS ===
+
+        // Observe network status
+        viewModel.isOnline.observe(this) { online ->
+            updateOfflineBanner(!online)
+        }
+
+        // Observe pending scans count
+        viewModel.pendingScansCount.observe(this) { count ->
+            updatePendingCount(count)
+        }
+
+        // === PRODUCT SYNC STATUS ===
+        // Observer untuk status sync master produk (untuk offline scan support)
+        viewModel.productSyncStatus.observe(this) { status ->
+            if (status.isSyncing) {
+                // Show subtle syncing indicator
+                android.util.Log.d("ScanActivity", "🔄 Syncing master products...")
+            } else {
+                status.message?.let { message ->
+                    if (status.isError) {
+                        // Show error toast
+                        Toast.makeText(this, "⚠️ $message", Toast.LENGTH_LONG).show()
+                    } else {
+                        // Just log success, don't interrupt user
+                        android.util.Log.d("ScanActivity", "✅ $message")
+                    }
+                }
+            }
+        }
+
+        // === SYNC STATUS (PENDING SCANS) ===
+        // Observer untuk status sync pending scans
+        viewModel.syncStatus.observe(this) { status ->
+            if (status.isSyncing) {
+                binding.btnSyncNow.isEnabled = false
+                binding.btnSyncNow.text = "⏳"
+                binding.tvOfflineMessage.text = status.message ?: "Menyinkronkan..."
+            } else {
+                binding.btnSyncNow.isEnabled = true
+                binding.btnSyncNow.text = "Sync"
+
+                status.message?.let { message ->
+                    if (status.isSuccess) {
+                        Toast.makeText(this, "✅ $message", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "⚠️ $message", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Update offline banner visibility and message
+     */
+    private fun updateOfflineBanner(isOffline: Boolean) {
+        if (isOffline) {
+            binding.offlineBanner.visibility = android.view.View.VISIBLE
+            binding.btnSyncNow.visibility = android.view.View.GONE // Hide sync button when offline
+        } else {
+            // When online, check if there are pending scans
+            val pendingCount = viewModel.pendingScansCount.value ?: 0
+            if (pendingCount > 0) {
+                binding.offlineBanner.visibility = android.view.View.VISIBLE
+                binding.tvOfflineMessage.text = "Online - $pendingCount scan menunggu sync"
+                binding.btnSyncNow.visibility = android.view.View.VISIBLE
+                binding.btnSyncNow.setOnClickListener {
+                    viewModel.triggerManualSync()
+                    Toast.makeText(this, "Sync dimulai...", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                binding.offlineBanner.visibility = android.view.View.GONE
+            }
+        }
+    }
+
+    /**
+     * Update pending scans count display
+     */
+    private fun updatePendingCount(count: Int) {
+        val isOnline = viewModel.isOnline.value ?: true
+
+        if (!isOnline) {
+            binding.tvOfflineMessage.text = "Mode Offline - $count scan tersimpan lokal"
+            binding.btnSyncNow.visibility = android.view.View.GONE
+        } else if (count > 0) {
+            binding.offlineBanner.visibility = android.view.View.VISIBLE
+            binding.tvOfflineMessage.text = "Online - $count scan menunggu sync"
+            binding.btnSyncNow.visibility = android.view.View.VISIBLE
+            binding.btnSyncNow.setOnClickListener {
+                viewModel.triggerManualSync()
+                Toast.makeText(this, "Sync dimulai...", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            binding.offlineBanner.visibility = android.view.View.GONE
         }
     }
 
@@ -587,7 +755,7 @@ class ScanActivity : AppCompatActivity() {
         // Submit dengan barcode (manual atau dari scan)
         // Jika mode manual, gunakan manualModeBarcode, jika tidak gunakan barcode dari input
         val barcodeToSubmit = manualModeBarcode ?: binding.etBarcode.text.toString().trim()
-        viewModel.submitScan(sku, qtyKarton = qtyKarton, qtyPcs = qtyPcs, barcode = barcodeToSubmit)
+        viewModel.submitScan(sku, qtyKarton = qtyKarton, qtyPcs = qtyPcs, barcode = barcodeToSubmit, pcsPerKarton = selectedPcsPerKarton)
     }
 
     private fun clearForm() {
@@ -626,16 +794,43 @@ class ScanActivity : AppCompatActivity() {
     }
 
     /**
+     * Play feedback (sound + vibration) berdasarkan settings
+     */
+    private fun playFeedback() {
+        lifecycleScope.launch {
+            // Check settings
+            val soundEnabled = settingsManager.isSoundEnabled().first()
+            val vibrationEnabled = settingsManager.isVibrationEnabled().first()
+
+            // Play beep sound if enabled
+            if (soundEnabled) {
+                try {
+                    toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
+                } catch (e: Exception) {
+                    android.util.Log.e("ScanActivity", "Failed to play beep: ${e.message}")
+                }
+            }
+
+            // Vibrate if enabled
+            if (vibrationEnabled) {
+                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    @Suppress("DEPRECATION")
+                    vibrator.vibrate(150)
+                }
+            }
+        }
+    }
+
+    /**
+     * @Deprecated Use playFeedback() instead
      * Vibrate untuk feedback scan
      */
+    @Deprecated("Use playFeedback() instead", ReplaceWith("playFeedback()"))
     private fun vibrate() {
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(150)
-        }
+        playFeedback()
     }
 
     /**
@@ -722,15 +917,15 @@ class ScanActivity : AppCompatActivity() {
             val totalItems = items.size
 
             val message = """
-                Anda akan menyelesaikan scan untuk DO ini.
-                
-                Total yang telah di-scan:
-                • $totalKarton Karton
-                • $totalPcs PCS
-                • $totalItems SKU
-                
-                Lanjutkan?
-            """.trimIndent()
+                    Anda akan menyelesaikan scan untuk DO ini.
+                    
+                    Total yang telah di-scan:
+                    • $totalKarton Karton
+                    • $totalPcs PCS
+                    • $totalItems SKU
+                    
+                    Lanjutkan?
+                """.trimIndent()
 
             AlertDialog.Builder(this)
                 .setTitle("✅ Selesai Scan")

@@ -8,12 +8,11 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +22,12 @@ import com.example.handheldapp.data.local.SessionManager
 import com.example.handheldapp.data.model.DeliveryOrder
 import com.example.handheldapp.data.model.StagingArea
 import com.example.handheldapp.databinding.ActivityMainBinding
+import com.example.handheldapp.repository.ProductSyncRepository
+import com.example.handheldapp.ui.base.BaseActivity
+import com.example.handheldapp.utils.AppStatus
+import com.example.handheldapp.utils.AppStatusManager
+import com.example.handheldapp.utils.AppUpdateManager
+import com.example.handheldapp.utils.NetworkMonitor
 import com.example.handheldapp.utils.Resource
 import com.example.handheldapp.viewmodel.DeliveryOrderViewModel
 import com.example.handheldapp.viewmodel.StagingAreaViewModel
@@ -39,7 +44,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: DeliveryOrderViewModel by viewModels()
@@ -47,6 +52,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var appStatusManager: AppStatusManager
+
+    @Inject
+    lateinit var productSyncRepository: ProductSyncRepository
+
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
+    @Inject
+    lateinit var appUpdateManager: AppUpdateManager
+
+    @Inject
+    lateinit var settingsManager: com.example.handheldapp.data.local.SettingsManager
 
     private lateinit var adapter: DeliveryOrderAdapter
     private lateinit var toggle: ActionBarDrawerToggle // Tombol Hamburger
@@ -82,9 +102,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupDateFilter()
         setupSearch()
         setupObservers()
+        setupAppStatusObservers() // App status & network monitoring
+        setupUpdateButton()
+        setupNotificationButton()
+        setupNavigationHeaderButtons()
 
         // 3. Load Data
         loadBranchAndUserInfo()
+
+        // 4. Check app status & sync products
+        checkAppStatusOnStart()
     }
 
     private fun setupToolbarAndDrawer() {
@@ -119,29 +146,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             // Update Toolbar Branch Text
-            binding.tvToolbarBranch.text = "$branchName"
+            binding.tvToolbarBranch.text = "Cabang: $branchName"
 
             // Update Header Sidebar (Nama, Branch, & Role)
             val headerView = binding.navView.getHeaderView(0)
             headerView.findViewById<TextView>(R.id.tvNavName)?.text = userName
-            headerView.findViewById<TextView>(R.id.tvNavEmail)?.text = "$branchName"
+            headerView.findViewById<TextView>(R.id.tvNavEmail)?.text = "Branch: $branchName"
 
             // Update role chip (optional - bisa disesuaikan dengan role user dari session)
             val chipRole = headerView.findViewById<com.google.android.material.chip.Chip>(R.id.chipRole)
             chipRole?.text = "Warehouse Staff"
 
-            val logout = headerView.findViewById<ImageView>(R.id.btnLogout)
-            logout.setOnClickListener {
-                showLogoutConfirmation()
-            }
-
             // PENTING: Set date filter ke hari ini SEBELUM load data
             val todayDate = dateFormat.format(selectedDate.time)
             viewModel.setDateFilter(todayDate)
 
-            // Load hanya tallysheet aktif (belum selesai)
-            viewModel.filterByStatus("Berlangsung")
-            viewModel.loadDeliveryOrders(branchCode, companyCode)
+            // Load hanya DO aktif (belum selesai scan) - exclude yang sudah completed
+            viewModel.loadDeliveryOrders(branchCode, companyCode, statusFilter = "active")
         }
     }
 
@@ -156,8 +177,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // Tally Sheet Submenu
             R.id.nav_tallysheet_aktif -> {
-                // Sudah di halaman ini, refresh saja
-                viewModel.filterByStatus("Berlangsung")
+                // Sudah di halaman ini, refresh dengan filter active saja
+                viewModel.loadDeliveryOrders(branchCode, companyCode, statusFilter = "active")
                 binding.chipBerlangsung.isChecked = true
                 Snackbar.make(binding.root, "Menampilkan Tallysheet Aktif", Snackbar.LENGTH_SHORT).show()
             }
@@ -168,32 +189,83 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // Warehouse Operations
             R.id.nav_putaway -> {
-                Snackbar.make(binding.root, "Fitur Put Away/Rak segera hadir", Snackbar.LENGTH_LONG).show()
+                showComingSoonDialog(
+                    "📦 Put Away / Penempatan Rak",
+                    "Fitur ini memungkinkan Anda untuk:\n" +
+                            "• Menentukan lokasi rak untuk barang hasil scan\n" +
+                            "• Auto-suggest rak berdasarkan kategori\n" +
+                            "• Tracking real-time posisi barang di gudang\n" +
+                            "• Print label lokasi rak\n\n" +
+                            "Status: Dalam pengembangan"
+                )
             }
             R.id.nav_stock_opname -> {
-                Snackbar.make(binding.root, "Fitur Stock Opname segera hadir", Snackbar.LENGTH_LONG).show()
+                showComingSoonDialog(
+                    "📊 Stock Opname",
+                    "Fitur ini memungkinkan Anda untuk:\n" +
+                            "• Melakukan pengecekan fisik stok gudang\n" +
+                            "• Scan barcode untuk validasi stok\n" +
+                            "• Deteksi selisih stok otomatis\n" +
+                            "• Generate laporan stock opname\n\n" +
+                            "Status: Dalam pengembangan"
+                )
             }
             R.id.nav_mutasi -> {
-                Snackbar.make(binding.root, "Fitur Mutasi Barang segera hadir", Snackbar.LENGTH_LONG).show()
+                showComingSoonDialog(
+                    "🔄 Mutasi Barang",
+                    "Fitur ini memungkinkan Anda untuk:\n" +
+                            "• Transfer barang antar rak\n" +
+                            "• Transfer barang antar gudang\n" +
+                            "• Tracking history mutasi\n" +
+                            "• Approval mutasi by supervisor\n\n" +
+                            "Status: Dalam pengembangan"
+                )
             }
             R.id.nav_btb -> {
-                Snackbar.make(binding.root, "Fitur BTB (Rusak/Reject) segera hadir", Snackbar.LENGTH_LONG).show()
+                showComingSoonDialog(
+                    "⚠️ BTB (Barang Tidak Bagus)",
+                    "Fitur ini memungkinkan Anda untuk:\n" +
+                            "• Catat barang rusak/reject\n" +
+                            "• Foto dokumentasi kerusakan\n" +
+                            "• Proses retur ke supplier\n" +
+                            "• Tracking status BTB\n\n" +
+                            "Status: Dalam pengembangan"
+                )
             }
 
             // Reports
             R.id.nav_history -> {
-                Snackbar.make(binding.root, "Fitur History Scan segera hadir", Snackbar.LENGTH_LONG).show()
+                showComingSoonDialog(
+                    "📜 History Scan Lengkap",
+                    "Fitur ini memungkinkan Anda untuk:\n" +
+                            "• Melihat semua history scan\n" +
+                            "• Filter by tanggal, user, DO\n" +
+                            "• Export data ke Excel/PDF\n" +
+                            "• Analisis performa scan\n\n" +
+                            "Status: Dalam pengembangan\n\n" +
+                            "Saat ini gunakan menu 'Tallysheet History' untuk melihat riwayat."
+                )
             }
             R.id.nav_reports -> {
-                Snackbar.make(binding.root, "Fitur Laporan Gudang segera hadir", Snackbar.LENGTH_LONG).show()
+                showComingSoonDialog(
+                    "📈 Laporan Gudang",
+                    "Fitur ini memungkinkan Anda untuk:\n" +
+                            "• Dashboard analytics gudang\n" +
+                            "• Laporan harian/bulanan\n" +
+                            "• Grafik performa operasional\n" +
+                            "• Export multi-format report\n\n" +
+                            "Status: Dalam pengembangan"
+                )
             }
 
             // Settings & Account
             R.id.nav_profile -> {
-                Snackbar.make(binding.root, "Fitur Profil segera hadir", Snackbar.LENGTH_LONG).show()
+                // Navigate to Profile Activity
+                startActivity(Intent(this, ProfileActivity::class.java))
             }
             R.id.nav_settings -> {
-                Snackbar.make(binding.root, "Fitur Pengaturan segera hadir", Snackbar.LENGTH_LONG).show()
+                // Navigate to Settings Activity
+                startActivity(Intent(this, SettingActivity::class.java))
             }
             R.id.nav_logout -> {
                 showLogoutConfirmation()
@@ -217,6 +289,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .show()
     }
 
+    /**
+     * Show informative dialog for coming soon features
+     */
+    private fun showComingSoonDialog(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Mengerti") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .show()
+    }
+
     // --- Fungsi Navigasi & UI (Tetap Sama) ---
 
     private fun setupRecyclerView() {
@@ -226,16 +312,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupFilterChips() {
-        // MainActivity hanya untuk Tallysheet Aktif
-        // Chip "Selesai" dihilangkan karena history punya halaman terpisah
-        binding.chipSemua.isChecked = true
-        binding.chipSemua.setOnClickListener {
-            viewModel.filterByStatus("Berlangsung") // Tetap filter aktif saja
-        }
+        // MainActivity hanya untuk DO Aktif (belum selesai scan)
+        // Chip "Selesai" dan "Semua" disembunyikan karena history ada di halaman terpisah
+        binding.chipBerlangsung.isChecked = true
         binding.chipBerlangsung.setOnClickListener {
-            viewModel.filterByStatus("Berlangsung")
+            viewModel.loadDeliveryOrders(branchCode, companyCode, statusFilter = "active")
         }
-        // Sembunyikan chip Selesai karena history di halaman terpisah
+
+        // Sembunyikan chip yang tidak diperlukan
+        binding.chipSemua.visibility = View.GONE
         binding.chipSelesai.visibility = View.GONE
     }
 
@@ -291,7 +376,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun applyLocalFilter() {
-        if (allDeliveryOrders.isEmpty()) return
+        if (allDeliveryOrders.isEmpty()) {
+            binding.tvDoCount.text = "0 Items"
+            return
+        }
 
         val query = currentSearchQuery.lowercase()
 
@@ -313,6 +401,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Collapse all before updating list
         adapter.collapseAll()
         adapter.submitList(filtered)
+
+        // Update DO count display (next to "Delivery Orders" title)
+        binding.tvDoCount.text = "${filtered.size} Items"
+
+        // Update statistics based on filtered/displayed list
+        updateStatistics(filtered)
+
         showEmptyState(filtered.isEmpty())
 
         // Show result count
@@ -363,6 +458,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 is Resource.Success -> {
                     showLoading(false)
                     allDeliveryOrders = resource.data ?: emptyList()
+                    // Statistics will be updated in applyLocalFilter() based on displayed list
                     applyLocalFilter() // Apply search filter if any
                 }
                 is Resource.Error -> {
@@ -431,6 +527,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showError(message: String) { Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show() }
+
+    /**
+     * Update statistics cards with actual data counts
+     */
+    private fun updateStatistics(deliveryOrders: List<DeliveryOrder>) {
+        // Total DO count (all delivery orders in the current date filter)
+        val totalCount = deliveryOrders.size
+
+        // Scanning count - DOs with "scanning", "arrival", or "berlangsung" status
+        val scanningCount = deliveryOrders.count { do_ ->
+            val status = do_.dohStatus?.lowercase()
+            status in listOf("arrival", "scanning", "berlangsung")
+        }
+
+        // Completed count - DOs with completed statuses
+        val completedCount = deliveryOrders.count { do_ ->
+            val status = do_.dohStatus?.lowercase()
+            status in listOf("selesai", "scan_completed", "completed", "approved_staff", "approved_manager", "approved")
+        }
+
+        // Update UI
+        binding.tvStatTotal.text = totalCount.toString()
+        binding.tvStatScanning.text = scanningCount.toString()
+        binding.tvStatCompleted.text = completedCount.toString()
+    }
 
     private fun navigateToScan(deliveryOrder: DeliveryOrder) {
         // Cek apakah DO sudah completed
@@ -565,5 +686,411 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
         if (branchCode.isNotEmpty()) viewModel.refreshDeliveryOrders()
+        // Re-check app status on resume
+        checkAppStatusOnStart()
+    }
+
+    // ========== APP STATUS & OFFLINE MODE ==========
+
+    /**
+     * Setup observers for network status and app status
+     */
+    private fun setupAppStatusObservers() {
+        // Observe network status
+        lifecycleScope.launch {
+            networkMonitor.isOnline.collect { isOnline ->
+                updateOfflineBanner(!isOnline)
+            }
+        }
+
+        // Observe app status changes
+        lifecycleScope.launch {
+            appStatusManager.appStatus.collect { status ->
+                updateAppStatusBanners(status)
+            }
+        }
+    }
+
+    /**
+     * Setup update button click handler
+     */
+    private fun setupUpdateButton() {
+        binding.btnUpdate.setOnClickListener {
+            // Open update dialog when button clicked
+            showUpdateDialog(mustUpdate = appStatusManager.statusDetails.value?.mustUpdate ?: false)
+        }
+    }
+
+    /**
+     * Setup notification button - show notifications/announcements
+     */
+    private fun setupNotificationButton() {
+        binding.btnNotification.setOnClickListener {
+            showNotificationDialog()
+        }
+    }
+
+    /**
+     * Setup navigation header buttons (Profile & Logout)
+     */
+    private fun setupNavigationHeaderButtons() {
+        val headerView = binding.navView.getHeaderView(0)
+
+        // Profile Button (Edit Profile)
+        val btnEditProfile = headerView.findViewById<ImageButton>(R.id.btnEditProfile)
+        btnEditProfile?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        // Logout Button
+        val btnLogout = headerView.findViewById<ImageButton>(R.id.btnLogout)
+        btnLogout?.setOnClickListener {
+            showLogoutConfirmation()
+        }
+    }
+
+    /**
+     * Show notification/announcement dialog
+     */
+    private fun showNotificationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("📢 Notifikasi & Pengumuman")
+
+        val notificationList = listOf(
+            "📦 Sistem Tallysheet" to "Gunakan menu ini untuk scan barcode pada proses penerimaan barang",
+            "✅ Approval Status" to "DO yang sudah scan complete akan otomatis masuk ke history dan menunggu approval",
+            "🔄 Sinkronisasi" to "Data akan otomatis sync ketika online. Pastikan koneksi internet stabil",
+            "📊 Laporan" to "Akses menu History untuk melihat riwayat scan dan status approval",
+            "💡 Tips" to "Gunakan filter tanggal untuk mempermudah pencarian DO spesifik"
+        )
+
+        val message = StringBuilder()
+        message.append("Informasi Sistem:\n\n")
+        notificationList.forEachIndexed { index, (title, desc) ->
+            message.append("${index + 1}. $title\n")
+            message.append("   $desc\n\n")
+        }
+
+        builder.setMessage(message.toString())
+        builder.setPositiveButton("Mengerti") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    /**
+     * Show settings information dialog
+     */
+    private fun showSettingsInfoDialog() {
+        // Navigate to SettingsActivity
+        startActivity(Intent(this, SettingActivity::class.java))
+    }
+
+    /**
+     * Check app status on start
+     */
+    private fun checkAppStatusOnStart() {
+        lifecycleScope.launch {
+            // Check app status
+            val currentVersionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+            val status = appStatusManager.checkAppStatus(currentVersionCode)
+
+            when (status) {
+                AppStatus.UPDATE_REQUIRED -> {
+                    // WAJIB UPDATE - tidak ada tombol Nanti
+                    showUpdateDialog(mustUpdate = true)
+                }
+                AppStatus.UPDATE_AVAILABLE -> {
+                    // UPDATE OPSIONAL - ada tombol Nanti
+                    showUpdateDialog(mustUpdate = false)
+                }
+                AppStatus.MAINTENANCE -> {
+                    // Banner already shown via observer
+                    // Sync master products for offline mode
+                    syncMasterProductsIfNeeded()
+                }
+                AppStatus.OK -> {
+                    // Normal mode - sync products if needed
+                    syncMasterProductsIfNeeded()
+                    // Check for scheduled maintenance (pengumuman sebelum maintenance)
+                    if (appStatusManager.hasScheduledMaintenance()) {
+                        showScheduledMaintenanceAlert()
+                    }
+                    // Schedule approval notification worker
+                    scheduleApprovalNotificationWorker()
+                    // Schedule new DO notification worker
+                    scheduleNewDONotificationWorker()
+                }
+            }
+        }
+    }
+
+    /**
+     * Schedule background worker for approval notification checking
+     */
+    private fun scheduleApprovalNotificationWorker() {
+        lifecycleScope.launch {
+            val isEnabled = settingsManager.isApprovalNotificationEnabled().first()
+            if (isEnabled) {
+                val interval = settingsManager.getNotificationCheckInterval().first().toLong()
+                com.example.handheldapp.worker.ApprovalNotificationWorker.schedule(
+                    context = this@MainActivity,
+                    intervalMinutes = interval
+                )
+                android.util.Log.d("MainActivity", "✅ Approval notification worker scheduled every $interval minutes")
+            }
+        }
+    }
+
+    /**
+     * Schedule background worker for new DO notification checking
+     */
+    private fun scheduleNewDONotificationWorker() {
+        lifecycleScope.launch {
+            val isEnabled = settingsManager.isDoStatusNotificationEnabled().first()
+            if (isEnabled) {
+                val interval = settingsManager.getNotificationCheckInterval().first().toLong()
+                com.example.handheldapp.worker.NewDONotificationWorker.schedule(
+                    context = this@MainActivity,
+                    intervalMinutes = interval
+                )
+                android.util.Log.d("MainActivity", "✅ New DO notification worker scheduled every $interval minutes")
+            }
+        }
+    }
+
+    /**
+     * Show scheduled maintenance alert (pengumuman sebelum maintenance dimulai)
+     */
+    private fun showScheduledMaintenanceAlert() {
+        val info = appStatusManager.getScheduledMaintenanceInfo() ?: return
+
+        val typeEmoji = when (info.maintenanceType) {
+            "critical" -> "🔴"
+            "major" -> "🟠"
+            else -> "🟡"
+        }
+
+        val typeText = when (info.maintenanceType) {
+            "critical" -> "Maintenance Penting"
+            "major" -> "Maintenance Besar"
+            else -> "Maintenance Ringan"
+        }
+
+        val scheduleText = buildString {
+            append("📅 ${info.startFormatted}")
+            if (!info.endFormatted.isNullOrEmpty()) {
+                append(" - ${info.endFormatted}")
+            }
+            if (!info.duration.isNullOrEmpty()) {
+                append("\n⏱️ Durasi: ${info.duration}")
+            }
+            append("\n\n⏳ Dimulai ${info.timeUntilStart}")
+        }
+
+        val message = buildString {
+            append(info.message ?: "Maintenance dijadwalkan.")
+            append("\n\n")
+            append(scheduleText)
+            append("\n\n")
+            append("Pastikan pekerjaan Anda tersimpan sebelum waktu maintenance dimulai.")
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("$typeEmoji $typeText Dijadwalkan")
+            .setMessage(message)
+            .setPositiveButton("Mengerti") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(true)
+            .show()
+    }
+
+    /**
+     * Sync master products cache if needed (every 24 hours)
+     */
+    private fun syncMasterProductsIfNeeded() {
+        lifecycleScope.launch {
+            // Gunakan gudangCode jika tersedia, fallback ke branchCode
+            val gudangCode = sessionManager.getGudangCode().first()
+                ?: sessionManager.getBranchCode().first()
+                ?: return@launch
+
+            when (val result = productSyncRepository.syncMasterProducts(gudangCode)) {
+                is ProductSyncRepository.SyncResult.Success -> {
+                    android.util.Log.d("MainActivity", "✅ Product sync success: ${result.count} products")
+                }
+                is ProductSyncRepository.SyncResult.AlreadySynced -> {
+                    android.util.Log.d("MainActivity", "⏳ Products already synced recently")
+                }
+                is ProductSyncRepository.SyncResult.Empty -> {
+                    android.util.Log.d("MainActivity", "📭 No products to sync")
+                }
+                is ProductSyncRepository.SyncResult.Error -> {
+                    android.util.Log.e("MainActivity", "❌ Product sync error: ${result.message}")
+                }
+            }
+        }
+    }
+
+    /**
+     * Update banners based on app status
+     */
+    private fun updateAppStatusBanners(status: AppStatus) {
+        runOnUiThread {
+            when (status) {
+                AppStatus.MAINTENANCE -> {
+                    binding.maintenanceBanner.visibility = View.VISIBLE
+                    binding.updateBanner.visibility = View.GONE
+                    val message = appStatusManager.getMaintenanceMessage()
+                    if (!message.isNullOrEmpty()) {
+                        binding.tvMaintenanceMessage.text = message
+                    }
+                }
+                AppStatus.UPDATE_REQUIRED -> {
+                    binding.maintenanceBanner.visibility = View.GONE
+                    binding.updateBanner.visibility = View.VISIBLE
+                    binding.tvUpdateMessage.text = "Update wajib tersedia. Silakan update sekarang."
+                }
+                AppStatus.UPDATE_AVAILABLE -> {
+                    // Update opsional - tampilkan banner tapi tidak blocking
+                    binding.maintenanceBanner.visibility = View.GONE
+                    binding.updateBanner.visibility = View.VISIBLE
+                    binding.tvUpdateMessage.text = "Versi baru tersedia. Ketuk untuk update."
+                }
+                AppStatus.OK -> {
+                    binding.maintenanceBanner.visibility = View.GONE
+                    binding.updateBanner.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    /**
+     * Update offline banner
+     */
+    private fun updateOfflineBanner(isOffline: Boolean) {
+        runOnUiThread {
+            binding.offlineBanner.visibility = if (isOffline) View.VISIBLE else View.GONE
+        }
+    }
+
+    /**
+     * Show force update dialog (blocking)
+     * Show update dialog
+     * @param mustUpdate true = WAJIB UPDATE (tidak ada tombol Nanti), false = OPSIONAL (ada tombol Nanti)
+     */
+    private fun showUpdateDialog(mustUpdate: Boolean) {
+        val updateUrl = appStatusManager.getUpdateUrl()
+        val latestVersion = appStatusManager.statusDetails.value?.latestVersion ?: "latest"
+        val hasDirectDownload = !updateUrl.isNullOrEmpty() &&
+                (updateUrl.endsWith(".apk") || updateUrl.contains("/download/"))
+
+        val message = appStatusManager.getReleaseNotes()
+            ?: if (mustUpdate) {
+                "Versi aplikasi Anda sudah tidak didukung.\n\nAnda harus mengupdate aplikasi ke versi terbaru untuk melanjutkan."
+            } else {
+                "Versi baru aplikasi tersedia.\n\nAnda dapat mengupdate sekarang atau nanti."
+            }
+
+        val builder = AlertDialog.Builder(this)
+            .setTitle(if (mustUpdate) "⚠️ Update Wajib" else "🔄 Update Tersedia")
+            .setMessage(message)
+            .setCancelable(false)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+
+        if (hasDirectDownload) {
+            builder.setPositiveButton("Download & Install") { _, _ ->
+                startApkDownloadFromMain(updateUrl!!, latestVersion)
+            }
+        } else {
+            builder.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                Snackbar.make(
+                    binding.root,
+                    "Silakan download APK dari admin",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        // Only show "Nanti" button if NOT must update
+        if (!mustUpdate) {
+            builder.setNegativeButton("Nanti") { dialog, _ ->
+                dialog.dismiss()
+                Snackbar.make(
+                    binding.root,
+                    "Update tersedia. Anda dapat mengupdate kapan saja.",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        builder.show()
+    }
+
+    /**
+     * Start APK download with progress dialog (from MainActivity)
+     */
+    private fun startApkDownloadFromMain(downloadUrl: String, version: String) {
+        val progressDialog = AlertDialog.Builder(this)
+            .setTitle("Downloading Update v$version")
+            .setMessage("Memulai download...")
+            .setCancelable(false)
+            .setNegativeButton("Batal") { dialog, _ ->
+                appUpdateManager.cancelDownload()
+                dialog.dismiss()
+            }
+            .create()
+
+        progressDialog.show()
+
+        lifecycleScope.launch {
+            appUpdateManager.downloadApk(downloadUrl, version).collect { progress ->
+                when (progress.status) {
+                    AppUpdateManager.DownloadStatus.PENDING -> {
+                        progressDialog.setMessage("Menunggu download dimulai...")
+                    }
+                    AppUpdateManager.DownloadStatus.RUNNING -> {
+                        val downloaded = appUpdateManager.formatBytes(progress.downloadedBytes)
+                        val total = appUpdateManager.formatBytes(progress.totalBytes)
+                        progressDialog.setMessage(
+                            "Downloading... ${progress.progress}%\n$downloaded / $total"
+                        )
+                    }
+                    AppUpdateManager.DownloadStatus.PAUSED -> {
+                        progressDialog.setMessage("Download dijeda...")
+                    }
+                    AppUpdateManager.DownloadStatus.SUCCESSFUL -> {
+                        progressDialog.dismiss()
+                        val installed = appUpdateManager.installApk(version)
+                        if (!installed) {
+                            Snackbar.make(
+                                binding.root,
+                                "Gagal install APK. Coba install manual dari folder Download.",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    AppUpdateManager.DownloadStatus.FAILED -> {
+                        progressDialog.dismiss()
+                        Snackbar.make(
+                            binding.root,
+                            "Download gagal: ${progress.errorMessage}",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                    AppUpdateManager.DownloadStatus.CANCELLED -> {
+                        progressDialog.dismiss()
+                        Snackbar.make(
+                            binding.root,
+                            "Download dibatalkan",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 }

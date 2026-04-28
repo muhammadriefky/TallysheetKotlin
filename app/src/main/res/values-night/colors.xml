@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors - Dark mode variant -->
+    <color name="primary">#64B5F6</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#1A237E</color>
+    <color name="accent">#FFD54F</color>
+
+    <!-- Status Colors -->
+    <color name="success">#81C784</color>
+    <color name="error">#EF5350</color>
+    <color name="warning">#FFB74D</color>
+    <color name="info">#4FC3F7</color>
+
+    <!-- Text Colors - Dark mode -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="text_hint">#757575</color>
+
+    <!-- Background Colors - Dark mode -->
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    <color name="divider">#2C2C2C</color>
+
+    <!-- Status Badge Colors - Dark mode -->
+    <color name="status_arrival">#FFB74D</color>
+    <color name="status_scanning">#4FC3F7</color>
+    <color name="status_approved">#81C784</color>
+    <color name="surface_variant">#2C2C2C</color>
+
+    <!-- Common Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Card and elevation colors for dark mode -->
+    <color name="card_background">#1E1E1E</color>
+    <color name="card_stroke">#333333</color>
+
+    <!-- Toolbar colors - Dark mode -->
+    <color name="toolbar_subtitle">#B3FFFFFF</color>
+
+    <!-- Navigation Drawer colors - Dark Mode -->
+    <color name="nav_background">#1E1E1E</color>
+    <color name="nav_header_background">#1A237E</color>
+    <color name="nav_item_text_color">#FFFFFF</color>
+    <color name="nav_item_icon_tint">#B0B0B0</color>
+    <color name="nav_item_selected_background">#1A237E</color>
+    <color name="nav_item_selected_text">#64B5F6</color>
+
+    <!-- Content background - Dark mode -->
+    <color name="content_background">#121212</color>
+
+    <!-- Ripple and overlay -->
+    <color name="ripple_color">#1FFFFFFF</color>
+
+    <!-- Input field colors - Dark mode -->
+    <color name="input_background">#2C2C2C</color>
+    <color name="input_stroke">#424242</color>
+
+    <!-- Status card backgrounds - Dark Mode -->
+    <color name="status_scanning_bg">#1A3A5C</color>
+    <color name="status_pending_bg">#3D3020</color>
+    <color name="status_approved_bg">#1A3A2A</color>
+    <color name="status_rejected_bg">#3D1A1A</color>
+    <color name="status_neutral_bg">#2C2C2C</color>
+
+    <!--  ── Base Dialog - Dark Mode ─────────────────────────────  -->
+    <color name="dlg_bg">#FF1E1E1E</color>
+    <color name="dlg_surface">#FF2C2C2C</color>
+    <color name="dlg_border">#1A64B5F6</color>
+    <color name="dlg_divider">#1AFFFFFF</color>
+    <color name="dlg_text_primary">#FFFFFFFF</color>
+    <color name="dlg_text_secondary">#FFB0BEC5</color>
+    <color name="dlg_text_muted">#FF78909C</color>
+    <color name="dlg_overlay_scrim">#CC000000</color>
+    <!--  ── Biru Utama (brand) - Dark Mode ───────────────────────  -->
+    <color name="dlg_blue_dark">#FF1976D2</color>
+    <color name="dlg_blue">#FF64B5F6</color>
+    <color name="dlg_blue_light">#FF1A237E</color>
+    <color name="dlg_blue_soft">#1A64B5F6</color>
+    <color name="dlg_blue_grad_start">#FF1565C0</color>
+    <color name="dlg_blue_grad_end">#FF1976D2</color>
+    <!--  ── Merah (Critical / Error) - Dark Mode ────────────────  -->
+    <color name="dlg_red">#FFEF5350</color>
+    <color name="dlg_red_dark">#FFE53935</color>
+    <color name="dlg_red_light">#FF3D1A1A</color>
+    <color name="dlg_red_soft">#1AEF5350</color>
+    <!--  ── Oranye (Warning) - Dark Mode ─────────────────────────  -->
+    <color name="dlg_orange">#FFFFB74D</color>
+    <color name="dlg_orange_dark">#FFFF9800</color>
+    <color name="dlg_orange_light">#FF3D3020</color>
+    <color name="dlg_orange_soft">#1AFFB74D</color>
+    <!--  ── Kuning (Info / Scheduled) - Dark Mode ───────────────  -->
+    <color name="dlg_yellow">#FFFFD54F</color>
+    <color name="dlg_yellow_soft">#1AFFD54F</color>
+    <color name="dlg_yellow_light">#FF3D3520</color>
+    <!--  ── Hijau (Success / Optional) - Dark Mode ─────────────  -->
+    <color name="dlg_green">#FF81C784</color>
+    <color name="dlg_green_dark">#FF66BB6A</color>
+    <color name="dlg_green_light">#FF1A3A2A</color>
+    <color name="dlg_green_soft">#1A81C784</color>
+    <!--  ── Check indicator - Dark Mode ─────────────────────────  -->
+    <color name="dlg_check_pass_bg">#1A81C784</color>
+    <color name="dlg_check_pass_text">#FF81C784</color>
+    <color name="dlg_check_fail_bg">#1AEF5350</color>
+    <color name="dlg_check_fail_text">#FFEF5350</color>
+    <!--  ── Button secondary - Dark Mode ────────────────────────  -->
+    <color name="dlg_btn_sec_bg">#FF2C2C2C</color>
+    <color name="dlg_btn_sec_border">#FF64B5F6</color>
+    <color name="dlg_btn_sec_text">#FF64B5F6</color>
+    <!--  ── Schedule block - Dark Mode ──────────────────────────  -->
+    <color name="dlg_schedule_bg">#FF1A237E</color>
+    <color name="dlg_schedule_border">#FF3949AB</color>
+</resources>

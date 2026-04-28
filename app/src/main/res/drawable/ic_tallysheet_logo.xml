@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Premium Tallysheet Logo - Modern Warehouse Icon -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="60"
+    android:viewportHeight="60">
+    
+    <!-- Background Circle Glow -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M30,30m-28,0a28,28 0,1,1 56,0a28,28 0,1,1 -56,0"
+        android:fillAlpha="0.15"/>
+    
+    <!-- Main Warehouse Building -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,12L14,19v24h32V19L30,12z"/>
+    
+    <!-- Roof Ridge Detail -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M30,12L14,19h32L30,12z"/>
+    
+    <!-- Door (Main Entrance) -->
+    <path
+        android:fillColor="#26A69A"
+        android:pathData="M26,30h8v13h-8z"/>
+    
+    <!-- Door Handle -->
+    <path
+        android:fillColor="#004D40"
+        android:pathData="M31,35m-1,0a1,1 0,1,1 2,0a1,1 0,1,1 -2,0"/>
+    
+    <!-- Left Window 1 -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M18,24h5v4h-5z"/>
+    
+    <!-- Left Window 2 -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M18,31h5v4h-5z"/>
+    
+    <!-- Right Window 1 -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M37,24h5v4h-5z"/>
+    
+    <!-- Right Window 2 -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M37,31h5v4h-5z"/>
+    
+    <!-- Loading Dock Lines -->
+    <path
+        android:strokeColor="#B2DFDB"
+        android:strokeWidth="1"
+        android:pathData="M15,38h10M35,38h10"/>
+    
+    <!-- Checkmark Icon (Quality Control) -->
+    <path
+        android:fillColor="#66BB6A"
+        android:pathData="M48,15m-6,0a6,6 0,1,1 12,0a6,6 0,1,1 -12,0"/>
+    
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M46,15l2,2l4,-4"/>
+    
+    <!-- Package Icon (Bottom Right Accent) -->
+    <path
+        android:fillColor="#FFB74D"
+        android:pathData="M13,38h-5v5h5z"/>
+    
+    <path
+        android:strokeColor="#F57C00"
+        android:strokeWidth="1"
+        android:pathData="M10.5,38v5M8,40.5h5"/>
+    
+</vector>

@@ -1,6 +1,6 @@
 <resources>
     <!-- Nama Aplikasi -->
-    <string name="app_name">Tallysheet Gudang</string>
+    <string name="app_name">Sistem Gudang</string>
 
     <!-- Filter Chip Labels -->
     <string name="filter_all">Semua</string>
@@ -59,4 +59,17 @@
     <string name="logout_confirm_message">Apakah Anda yakin ingin keluar dari akun ini?</string>
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
+
+    <!-- Content Descriptions (Accessibility) -->
+    <string name="profile_photo">Foto Profil</string>
+    <string name="change_photo">Ubah Foto</string>
+    <string name="edit">Edit</string>
+    <string name="navigate">Navigasi</string>
+    <string name="time">Waktu</string>
+    <string name="history">Riwayat</string>
+    <string name="scan">Scan</string>
+    <string name="notifications">Notifikasi</string>
+    <string name="storage">Penyimpanan</string>
+    <string name="settings">Pengaturan</string>
+    <string name="info">Informasi</string>
 </resources>

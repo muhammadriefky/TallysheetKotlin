@@ -8,14 +8,13 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.handheldapp.R
 import com.example.handheldapp.adapter.DeliveryOrderAdapter
 import com.example.handheldapp.data.local.SessionManager
 import com.example.handheldapp.data.model.DeliveryOrder
 import com.example.handheldapp.databinding.ActivityTallysheetHistoryBinding
+import com.example.handheldapp.ui.base.BaseActivity
 import com.example.handheldapp.utils.Resource
 import com.example.handheldapp.viewmodel.DeliveryOrderViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -34,7 +33,7 @@ import javax.inject.Inject
  * Hanya menampilkan DO yang sudah selesai (completed/approved)
  */
 @AndroidEntryPoint
-class TallysheetHistoryActivity : AppCompatActivity() {
+class TallysheetHistoryActivity : BaseActivity() {
 
     private lateinit var binding: ActivityTallysheetHistoryBinding
     private val viewModel: DeliveryOrderViewModel by viewModels()
@@ -164,9 +163,8 @@ class TallysheetHistoryActivity : AppCompatActivity() {
                 return@launch
             }
 
-            // Filter hanya yang sudah selesai
-            viewModel.filterByStatus("Selesai")
-            viewModel.loadDeliveryOrders(branchCode, companyCode)
+            // Load DO yang sudah selesai (history) - status: scan_completed atau completed
+            viewModel.loadDeliveryOrders(branchCode, companyCode, "history")
         }
     }
 

@@ -12,9 +12,12 @@ import com.example.handheldapp.databinding.FragmentScanListBinding
 import com.example.handheldapp.utils.Resource
 import com.example.handheldapp.viewmodel.ScanViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.NumberFormat
+import java.util.Locale
 
 /**
  * Fragment untuk menampilkan RINGKASAN scan (1 baris per SKU dengan total qty)
+ * ★ UPDATED: Now shows Total PCS per SKU and Grand Total
  */
 @AndroidEntryPoint
 class ScanSummaryFragment : Fragment() {
@@ -24,6 +27,8 @@ class ScanSummaryFragment : Fragment() {
 
     private val viewModel: ScanViewModel by activityViewModels()
     private lateinit var adapter: ScanHistoryAdapter
+
+    private val numberFormat = NumberFormat.getNumberInstance(Locale("id", "ID"))
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +45,7 @@ class ScanSummaryFragment : Fragment() {
         setupRecyclerView()
         setupSwipeRefresh()
         observeData()
+        observeTotals()
     }
 
     private fun setupRecyclerView() {
@@ -63,7 +69,9 @@ class ScanSummaryFragment : Fragment() {
                     showLoading(false)
                     val data = resource.data ?: emptyList()
                     android.util.Log.d("ScanSummary", "📊 RINGKASAN - Total items: ${data.size}")
-                    adapter.submitList(data)
+                    // ★ Force refresh adapter dengan list baru untuk trigger DiffUtil
+                    adapter.submitList(null) // Clear first
+                    adapter.submitList(data.toList()) // Submit new list (copy)
                     showEmptyState(data.isEmpty())
                 }
                 is Resource.Error -> {
@@ -75,6 +83,25 @@ class ScanSummaryFragment : Fragment() {
         }
     }
 
+    /**
+     * ★ Observe totals for grand total display
+     */
+    private fun observeTotals() {
+        viewModel.scanTotals.observe(viewLifecycleOwner) { historyData ->
+            if (historyData != null && historyData.grandTotalPcs > 0) {
+                binding.layoutTotalSummary.visibility = View.VISIBLE
+
+                // Format grand total
+                binding.tvGrandTotalPcs.text = "${numberFormat.format(historyData.grandTotalPcs)} PCS"
+
+                // Format breakdown
+                binding.tvTotalBreakdown.text = "(${numberFormat.format(historyData.totalKarton)} Krt + ${numberFormat.format(historyData.totalPcsOnly)} PCS)"
+            } else {
+                binding.layoutTotalSummary.visibility = View.GONE
+            }
+        }
+    }
+
     private fun showLoading(isLoading: Boolean) {
         binding.swipeRefresh.isRefreshing = isLoading
     }
@@ -82,6 +109,11 @@ class ScanSummaryFragment : Fragment() {
     private fun showEmptyState(isEmpty: Boolean) {
         binding.tvEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
         binding.recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
+
+        // Hide totals when empty
+        if (isEmpty) {
+            binding.layoutTotalSummary.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {

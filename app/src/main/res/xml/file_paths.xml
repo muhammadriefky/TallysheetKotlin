@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- For APK downloads in external files directory -->
+    <external-files-path
+        name="downloads"
+        path="Download/" />
+
+    <!-- For internal cache if needed -->
+    <cache-path
+        name="cache"
+        path="/" />
+
+    <!-- For external storage downloads (fallback) -->
+    <external-path
+        name="external_downloads"
+        path="Download/" />
+</paths>

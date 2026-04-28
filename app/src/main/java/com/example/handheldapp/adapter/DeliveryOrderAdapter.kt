@@ -65,7 +65,8 @@ class DeliveryOrderAdapter(
             currentDo = deliveryOrder
             val context = binding.root.context
 
-            val isCompleted = deliveryOrder.dohStatus?.lowercase() in listOf("selesai", "scan_completed", "completed")
+            // Gunakan flag isCompleted dari API (lebih akurat)
+            val isCompleted = deliveryOrder.isCompleted
 
             // === COMPACT HEADER INFO ===
             binding.tvDoNumber.text = deliveryOrder.dohNodo ?: "-"
@@ -169,8 +170,33 @@ class DeliveryOrderAdapter(
             }
 
             // === TOMBOL MULAI SCAN ===
+            // Disable tombol jika DO sudah completed atau approved
+            if (isCompleted) {
+                binding.btnMulaiScan.isEnabled = false
+                binding.btnMulaiScan.text = "✓ Scan Selesai"
+                binding.btnMulaiScan.setBackgroundColor(Color.parseColor("#BDBDBD"))
+                binding.btnMulaiScan.setTextColor(Color.parseColor("#757575"))
+            } else if (!deliveryOrder.hasStaging) {
+                binding.btnMulaiScan.isEnabled = true
+                binding.btnMulaiScan.text = "⚠️ Pilih Staging Dulu"
+                binding.btnMulaiScan.setBackgroundColor(Color.parseColor("#FF9800"))
+                binding.btnMulaiScan.setTextColor(Color.WHITE)
+            } else if (deliveryOrder.hasScans) {
+                binding.btnMulaiScan.isEnabled = true
+                binding.btnMulaiScan.text = "📱 Lanjutkan Scan"
+                binding.btnMulaiScan.setBackgroundColor(Color.parseColor("#2196F3"))
+                binding.btnMulaiScan.setTextColor(Color.WHITE)
+            } else {
+                binding.btnMulaiScan.isEnabled = true
+                binding.btnMulaiScan.text = "📱 Mulai Scan"
+                binding.btnMulaiScan.setBackgroundColor(Color.parseColor("#4CAF50"))
+                binding.btnMulaiScan.setTextColor(Color.WHITE)
+            }
+
             binding.btnMulaiScan.setOnClickListener {
-                onItemClick(deliveryOrder)
+                if (!isCompleted) {
+                    onItemClick(deliveryOrder)
+                }
             }
 
             // === EXPAND/COLLAPSE ===

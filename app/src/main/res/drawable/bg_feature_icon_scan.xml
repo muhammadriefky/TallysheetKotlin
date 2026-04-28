@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Feature Icon Background - Scan (Blue Gradient) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- Circle Background with Gradient -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#42A5F5"
+                android:endColor="#1976D2"
+                android:angle="135"
+                android:type="linear"/>
+        </shape>
+    </item>
+    
+    <!-- Scan Icon -->
+    <item
+        android:width="24dp"
+        android:height="24dp"
+        android:gravity="center">
+        <vector
+            android:width="24dp"
+            android:height="24dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+            
+            <!-- QR Code Squares -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M3,3h7v7H3z"/>
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M14,3h7v7h-7z"/>
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M3,14h7v7H3z"/>
+            
+            <!-- Center Dots Pattern -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M5,5h3v3H5zM16,5h3v3h-3zM5,16h3v3H5z"/>
+            
+            <!-- Scanning Line -->
+            <path
+                android:strokeColor="#FFC107"
+                android:strokeWidth="2"
+                android:strokeLineCap="round"
+                android:pathData="M14,17h7M14,19h5M14,21h6"/>
+            
+        </vector>
+    </item>
+    
+</layer-list>

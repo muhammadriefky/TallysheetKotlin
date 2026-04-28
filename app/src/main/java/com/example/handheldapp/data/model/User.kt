@@ -5,20 +5,29 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 /**
- * Data class untuk User (ms_user)
- * Disesuaikan dengan kolom: usr_loginname, usr_name, usr_grpcode
+ * Data class untuk User (wdms_users table)
+ * Disesuaikan dengan kolom: usr_fullname, email, usr_rolecode
  */
 @Parcelize
 data class User(
-    @SerializedName("usr_loginname") // Pastikan ini sesuai dengan JSON Laravel
-    val usrCode: String?, // Ubah jadi nullable agar tidak crash saat parsing
+    @SerializedName("username")  // API returns 'username' which is usr_fullname
+    val usrCode: String?, // Username/fullname for display
 
-    @SerializedName("usr_name")
-    val usrName: String?,
+    @SerializedName("email")
+    val email: String?,   // Email - digunakan untuk login
 
-    @SerializedName("usr_grpcode")
-    val usrGrpcode: String? = null
+    @SerializedName("name")
+    val usrName: String?, // Display name
+
+    @SerializedName("role")  // API returns 'role' which is usr_rolecode
+    val role: String? = null,  // Admin_IT, Kepala_Gudang, Admin_Gudang
+
+    @SerializedName("company_code")
+    val companyCode: String? = null,
+
+    @SerializedName("branch_code")
+    val branchCode: String? = null
 
 ) : Parcelable {
-    fun getDisplayText(): String = "$usrCode"
+    fun getDisplayText(): String = email ?: usrCode ?: "No Email"
 }

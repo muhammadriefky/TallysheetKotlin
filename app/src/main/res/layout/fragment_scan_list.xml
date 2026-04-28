@@ -23,18 +23,18 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="2.5"
                 android:text="SKU / Produk"
-                android:textSize="11sp"
+                android:textSize="10sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
-                android:text="Karton"
-                android:textSize="11sp"
+                android:layout_weight="1"
+                android:text="Krt"
+                android:textSize="10sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 android:gravity="center" />
@@ -42,11 +42,22 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
+                android:layout_weight="1"
                 android:text="PCS"
-                android:textSize="11sp"
+                android:textSize="10sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
+                android:gravity="center" />
+
+            <!-- ★ Total PCS Header -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:text="Total PCS"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
                 android:gravity="center" />
         </LinearLayout>
 
@@ -59,7 +70,60 @@
             android:paddingBottom="8dp"
             tools:listitem="@layout/item_scan_history"
             app:layout_constraintTop_toBottomOf="@id/layoutTableHeader"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toTopOf="@id/layoutTotalSummary" />
+
+        <!-- ★ Total Summary Footer -->
+        <LinearLayout
+            android:id="@+id/layoutTotalSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/status_approved_bg"
+            android:padding="12dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="GRAND TOTAL"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#1B5E20" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="end">
+
+                    <TextView
+                        android:id="@+id/tvGrandTotalPcs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2E7D32"
+                        tools:text="12,500 PCS" />
+
+                    <TextView
+                        android:id="@+id/tvTotalBreakdown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="10sp"
+                        android:textColor="#4CAF50"
+                        tools:text="(100 Krt + 500 PCS)" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvEmptyState"

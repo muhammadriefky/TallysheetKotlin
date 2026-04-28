@@ -219,7 +219,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:padding="12dp"
-                        android:background="#F5F5F5"
+                        android:background="@color/surface_variant"
                         android:gravity="center_vertical">
 
                         <TextView
@@ -277,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:padding="12dp"
-                        android:background="#FFEBEE"
+                        android:background="@color/status_rejected_bg"
                         android:gravity="center_vertical">
 
                         <TextView
@@ -337,3 +337,5 @@
         android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+

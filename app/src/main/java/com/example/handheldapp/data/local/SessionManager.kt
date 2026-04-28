@@ -15,8 +15,9 @@ import javax.inject.Singleton
 
 /**
  * Extension untuk create DataStore instance
+ * Nama harus unik di seluruh aplikasi
  */
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "warehouse_session")
+private val Context.warehouseSessionDataStore: DataStore<Preferences> by preferencesDataStore(name = "warehouse_session")
 
 /**
  * Session Manager menggunakan DataStore
@@ -27,12 +28,12 @@ class SessionManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    private val dataStore = context.dataStore
+    private val dataStore = context.warehouseSessionDataStore
 
     companion object {
         private val TOKEN_KEY = stringPreferencesKey("auth_token")
-        // Sesuaikan dengan nama kolom di SQL Server agar tidak bingung
-        private val USER_LOGINNAME_KEY = stringPreferencesKey("usr_loginname")
+        // usr_fullname - nama lengkap user (renamed from usr_loginname)
+        private val USER_LOGINNAME_KEY = stringPreferencesKey("usr_fullname")
         private val USER_NAME_KEY = stringPreferencesKey("usr_name")
         private val USER_ID_KEY = intPreferencesKey("usr_id")
 
@@ -41,6 +42,9 @@ class SessionManager @Inject constructor(
 
         private val BRANCH_CODE_KEY = stringPreferencesKey("cab_code")
         private val BRANCH_NAME_KEY = stringPreferencesKey("cab_desc")
+
+        // Gudang/Business code for WMS operations
+        private val GUDANG_CODE_KEY = stringPreferencesKey("gudang_code")
     }
 
     /**
@@ -59,7 +63,7 @@ class SessionManager @Inject constructor(
 
     /**
      * Save user info (Setelah Login Sukses)
-     * Kita simpan usr_loginname (seperti 'gemini_user') dan nama aslinya
+     * Kita simpan usr_fullname (nama lengkap) dan display name
      */
     suspend fun saveUser(usrLoginname: String, usrName: String, userId: Int = 0) {
         dataStore.edit { preferences ->
@@ -108,6 +112,18 @@ class SessionManager @Inject constructor(
 
     fun getBranchCode(): Flow<String?> = dataStore.data.map { it[BRANCH_CODE_KEY] }
     fun getBranchName(): Flow<String?> = dataStore.data.map { it[BRANCH_NAME_KEY] }
+
+    /**
+     * Save gudang/business code (untuk WMS operations)
+     * Biasanya di-set saat login atau memilih branch
+     */
+    suspend fun saveGudangCode(gudangCode: String) {
+        dataStore.edit { preferences ->
+            preferences[GUDANG_CODE_KEY] = gudangCode
+        }
+    }
+
+    fun getGudangCode(): Flow<String?> = dataStore.data.map { it[GUDANG_CODE_KEY] }
 
     /**
      * Clear all session data (logout)

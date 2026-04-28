@@ -14,7 +14,7 @@ data class Company(
     val comCode: String,
 
     @SerializedName("com_name")
-    val comName: String,
+    val comName: String? = null,  // Nullable karena API tidak selalu return field ini
 
     // Field di bawah ini akan bernilai null karena tidak ada di alias SELECT Laravel
     @SerializedName("com_address")
@@ -26,6 +26,11 @@ data class Company(
     @SerializedName("com_active")
     val comActive: Int = 1
 ) : Parcelable {
+
+    /**
+     * Get company name dengan fallback ke comCode jika null
+     */
+    fun getCompanyName(): String = comName ?: comCode
 
     /**
      * Digunakan oleh ArrayAdapter Spinner untuk menampilkan teks
